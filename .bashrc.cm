@@ -1,0 +1,107 @@
+# Aliases / scripts for CM work
+
+CM_SRC=~/cm-11.0
+
+alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-cm-11.0/`date +%Y%m%dT%H%M%S` )'
+
+build-cm() {
+(
+  export OUT_DIR_COMMON_BASE=/out/$1/ && \
+  echo $OUT_DIR_COMMON_BASE && \
+  cd $CM_SRC && \
+  . ./build/envsetup.sh && \
+  brunch $1 && \
+  mkdir -p /mnt/roms/$1 && \
+  cp $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL-$1.zip /mnt/roms/$1
+) 2>&1 | tee /tmp/build-$1.txt
+}
+
+release-cm() {
+  export OUT_DIR_COMMON_BASE=/out/$1/ && \
+  scp `ls -t $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
+}
+
+build-cm-boot() {
+(
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
+  echo $OUT_DIR_COMMON_BASE && \
+  cd $CM_SRC && \
+  . ./build/envsetup.sh && \
+  breakfast $1 && \
+  mka bootimage && \
+  boot-odin $1
+) 2>&1 | tee /tmp/build-$1.txt
+}
+
+clean-cm() {
+(
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
+  cd $CM_SRC && \
+  . ./build/envsetup.sh && \
+  make clean
+)
+}
+
+boot-odin() {
+(
+  cd /mnt/$1/odin && \
+  create-odin cm-boot /out/$1/*/target/product/$1/boot.img
+)
+}
+
+gdb-cm() {
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
+  . ./build/envsetup.sh && \
+  breakfast $1 && \
+  gdbclient
+}
+
+# -------------------------
+
+alias build-mondrianwifi='build-cm mondrianwifi'
+alias build-mondrianlte='build-cm mondrianlte'
+alias build-mondrianwifi-boot='build-cm-boot mondrianwifi'
+alias build-mondrianlte-boot='build-cm-boot mondrianlte'
+alias mondrianwifi-boot-odin='boot-odin mondrianwifi'
+alias mondrianlte-boot-odin='boot-odin mondrianlte'
+alias release-mondrianlte='release-cm mondrianlte'
+
+alias build-picassolte='build-cm picassolte'
+alias build-picassolte-boot='build-cm-boot picassolte'
+alias picassolte-boot-odin='boot-odin picassolte'
+alias release-picassolte='release-cm picassolte'
+
+alias build-dlx='build-cm dlx'
+alias build-dlx-boot='build-cm-boot dlx'
+alias release-dlx='release-cm dlx'
+
+alias build-hh='build-cm hh'
+alias build-hh-boot='build-cm-boot hh'
+alias release-hh='release-cm hh'
+
+alias gdb-mondrianwifi="gdb-cm mondrianwifi"
+
+alias mondrianwifi-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/mondrianwifi/recovery.img )'
+
+alias picassolte-recovery-odin='( cd /mnt/picassolte/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/picassolte/recovery.img )'
+
+alias mondrianlte-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/mondrianlte/recovery.img )'
+
+# -------------------------
+
+cm-status() {
+(
+    cd ~/cm-11.0
+    for f in `repo status | sed "s/^project //p;d" | sed "s/ .*//"`
+    do
+        (
+             echo
+             echo "******* $f *****"
+             echo
+             cd $f
+             git status
+             log github/cm-11.0..
+        )
+   done
+)
+}
