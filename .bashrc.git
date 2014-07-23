@@ -1,0 +1,4 @@
+# git aliases / scripts
+
+alias gc="git cherry-pick"
+alias log='git log --oneline --no-merges'
