@@ -1,0 +1,3 @@
+export PATH=~/bin:"$PATH"
+export USE_CCACHE=1
+export EDITOR=vi
