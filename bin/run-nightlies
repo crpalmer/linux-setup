@@ -1,0 +1,8 @@
+#!/bin/bash -l
+
+sync-cm
+rm -rf /out/*
+build-cm mondrianlte
+release-nightly mondrianlte
+build-cm picassolte
+release-nightly picassolte
