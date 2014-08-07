@@ -1,0 +1,11 @@
+#!/bin/bash -l
+
+# Number of files to keep (+1)
+N=11
+
+for dir in /nightlies/*
+do
+    if [ -d $dir ]; then
+	rm `ls -td $dir/* | tail -n +$N`
+    fi
+done
