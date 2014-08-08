@@ -1,8 +1,10 @@
-#!/bin/bash -l
+#!/bin/bash -i
 
+(
 sync-cm
 rm -rf /out/*
 build-cm mondrianlte
 release-nightly mondrianlte
 build-cm picassolte
 release-nightly picassolte
+) > /tmp/nightlies.txt 2>&1
