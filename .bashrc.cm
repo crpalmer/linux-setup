@@ -14,8 +14,10 @@ build-cm() {
   cd $CM_SRC && \
   . ./build/envsetup.sh && \
   brunch $1 && \
-  mkdir -p /mnt/roms/$1 && \
-  cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
+  if [ -e /mnt/roms ]; then
+    mkdir -p /mnt/roms/$1 && \
+    cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
+  fi
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
