@@ -213,3 +213,11 @@ alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_
 alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
 
 alias restart-adb='adb kill-server && sudo `which adb` start-server'
+
+generate-changelog() {
+  cd $CM_SRC/$1
+  TAG=nightly-`date +%Y%m%d`
+  git tag -d $TAG 2>/dev/null
+  git tag $TAG
+  git log --oneline --decorate
+}

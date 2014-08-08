@@ -1,10 +1,41 @@
 #!/bin/bash -i
 
+UNOFFICIAL="
+	device/samsung/tabpro-common
+	device/samsung/picassolte
+	device/samsung/mondrianlte
+	vendor/samsung/tabpro-common"
+
+changelog-name() {
+   echo /tmp/changelog-`echo $1 | sed 's@/@_@g'`.txt
+}
+
+generate-changelogs() {
+echo $UNOFFICIAL
+  for dir in $UNOFFICIAL
+  do
+echo $dir
+changelog-name $dir
+    generate-changelog $dir > `changelog-name $dir`
+  done
+}
+
+push-changelogs() {
+  for dir in $UNOFFICIAL
+  do
+    scp `changelog-name $dir` download.crpalmer.org:/nightlies/
+  done
+}
+
+##########################################################################
+
 (
-sync-cm
-rm -rf /out/*
-build-cm mondrianlte
-release-nightly mondrianlte
-build-cm picassolte
-release-nightly picassolte
+  sync-cm
+  generate-changelogs
+  rm -rf /out/*
+  build-cm mondrianlte
+  release-nightly mondrianlte
+  build-cm picassolte
+  release-nightly picassolte
+  push-changelogs
 ) > /tmp/nightlies.txt 2>&1
