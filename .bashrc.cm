@@ -12,7 +12,7 @@ build-cm() {
   . ./build/envsetup.sh && \
   brunch $1 && \
   mkdir -p /mnt/roms/$1 && \
-  cp $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL-$1.zip /mnt/roms/$1
+  cp $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
@@ -77,15 +77,15 @@ alias release-dlx='release-cm dlx'
 
 alias build-hh='build-cm hh'
 alias build-hh-boot='build-cm-boot hh'
+alias build-hammerhead='build-cm hh'
+alias build-hammerhead-boot='build-cm-boot hh'
 alias release-hh='release-cm hh'
 
 alias gdb-mondrianwifi="gdb-cm mondrianwifi"
 
-alias mondrianwifi-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/mondrianwifi/recovery.img )'
+alias mondrianwifi-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery /out/mondrianwifi/*/target/product/mondrianwifi/recovery.img )'
 
-alias picassolte-recovery-odin='( cd /mnt/picassolte/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/picassolte/recovery.img )'
-
-alias mondrianlte-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery ~/mondrianwifi/cm-11.0/out/target/product/mondrianlte/recovery.img )'
+alias picassolte-recovery-odin='( cd /mnt/picassolte/odin && create-odin cm-recovery /out/picassolte/*/target/product/picassolte/recovery.img )'
 
 # -------------------------
 
