@@ -44,8 +44,8 @@ clean-cm() {
 
 boot-odin() {
 (
-  cd /mnt/$1/odin && \
-  create-odin cm-boot /out/$1/*/target/product/$1/boot.img
+  cd /mnt/roms/odin && \
+  create-odin cm-boot-$1 /out/$1/*/target/product/$1/boot.img
 )
 }
 
@@ -71,21 +71,29 @@ alias build-picassolte-boot='build-cm-boot picassolte'
 alias picassolte-boot-odin='boot-odin picassolte'
 alias release-picassolte='release-cm picassolte'
 
+alias build-picassowifi='build-cm picassowifi'
+alias build-picassowifi-boot='build-cm-boot picassowifi'
+alias picassowifi-boot-odin='boot-odin picassowifi'
+alias release-picassowifi='release-cm picassowifi'
+
 alias build-dlx='build-cm dlx'
 alias build-dlx-boot='build-cm-boot dlx'
 alias release-dlx='release-cm dlx'
 
-alias build-hh='build-cm hh'
-alias build-hh-boot='build-cm-boot hh'
-alias build-hammerhead='build-cm hh'
-alias build-hammerhead-boot='build-cm-boot hh'
-alias release-hh='release-cm hh'
+alias build-hh='build-cm hammerhead'
+alias build-hh-boot='build-cm-boot hammerhead'
+alias release-hh='release-cm hammerhead'
+alias build-hammerhead='build-cm hammerhead'
+alias build-hammerhead-boot='build-cm-boot hammerhead'
+alias release-hammerhead='release-cm hammerhead'
 
 alias gdb-mondrianwifi="gdb-cm mondrianwifi"
 
-alias mondrianwifi-recovery-odin='( cd /mnt/mondrianwifi/odin && create-odin cm-recovery /out/mondrianwifi/*/target/product/mondrianwifi/recovery.img )'
+alias mondrianwifi-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-mondrianwifi /out/mondrianwifi/*/target/product/mondrianwifi/recovery.img )'
 
-alias picassolte-recovery-odin='( cd /mnt/picassolte/odin && create-odin cm-recovery /out/picassolte/*/target/product/picassolte/recovery.img )'
+alias picassolte-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-picassolte /out/picassolte/*/target/product/picassolte/recovery.img )'
+
+alias picassowifi-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-picassowifi /out/picassowifi/*/target/product/picassowifi/recovery.img )'
 
 # -------------------------
 
@@ -105,3 +113,66 @@ cm-status() {
    done
 )
 }
+
+# ------------------------
+
+flash-boot() {
+   boot=/out/$1/*/target/product/$1/boot.img
+   if [ ! -r $boot ]; then
+	echo >&2 "error: Must specify build target and build it.  Failed to access:\n\t$boot"
+	exit 1
+   fi
+   dev=dw_mmc.0
+   if [ "$2" != "" ]; then
+	dev="$2"
+   else
+	dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
+   fi
+   adb push $boot /sdcard/boot.img
+   adb shell su -c "dd if=/sdcard/boot.img of=$dev"
+}
+
+alias flash-boot-dlx='flash-boot dlx'
+alias flash-boot-hammerhead='flash-boot hammerhead'
+alias flash-boot-mondrianwifi='flash-boot mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/boot'
+alias flash-boot-picassolte='flash-boot picassolte'
+alias flash-boot-picassowifi='flash-boot picassowifi'
+
+# ------------------------
+
+flash-recovery() {
+   recovery=/out/$1/*/target/product/$1/recovery.img
+   if [ ! -r $recovery ]; then
+	echo >&2 "error: Must specify build target and build it.  Failed to access:\n\t$recovery"
+	exit 1
+   fi
+   if [ "$2" != "" ]; then
+	dev="$2"
+   else
+	dev="/dev/block/platform/dw_mmc.0/by-name/RECOVERY"
+   fi
+   adb push $recovery /sdcard/recovery.img
+   adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
+}
+
+alias flash-recovery-dlx='flash-recovery dlx'
+alias flash-recovery-hammerhead='flash-recovery hammerhead'
+alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery'
+alias flash-recovery-picassolte='flash-recovery picassolte'
+alias flash-recovery-picassowifi='flash-recovery picassowifi'
+
+# -----------------------------
+
+tis-delta() {
+    date
+    adb shell su -c "cat $1" | dos2unix > /tmp/tis
+    join -j 1 -t ' ' /tmp/tis.last /tmp/tis | \
+	awk '{ if ($3 != $2) printf("%d %d\n", $1, $3 - $2); }'
+    cp /tmp/tis /tmp/tis.last
+}
+
+alias tis-delta-mali="tis-delta /sys/devices/platform/mali.0/time_in_state"
+alias tis-delta-cpu0="tis-delta /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state"
+alias tis-delta-cpu1="tis-delta /sys/devices/system/cpu/cpu1/cpufreq/stats/time_in_state"
+alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_in_state"
+alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
