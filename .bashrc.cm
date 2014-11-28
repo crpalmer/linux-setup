@@ -1,8 +1,11 @@
 # Aliases / scripts for CM work
 
-CM_SRC=~/cm-11.0
+alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` ; echo ; echo "*** ERRORS ***" ; echo ; egrep "error|leaving |CONFLICT" /tmp/sync.txt )'
 
-alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-cm-11.0/`date +%Y%m%dT%H%M%S` )'
+alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && cd ~/cm-11.0"
+alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && cd ~/cm-12.0"
+
+start-cm-12.0
 
 build-cm() {
 (
@@ -12,13 +15,13 @@ build-cm() {
   . ./build/envsetup.sh && \
   brunch $1 && \
   mkdir -p /mnt/roms/$1 && \
-  cp $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
+  cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
 release-cm() {
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
-  scp `ls -t $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
+  scp `ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
 }
 
 build-cm-boot() {
@@ -45,7 +48,7 @@ clean-cm() {
 boot-odin() {
 (
   cd /mnt/roms/odin && \
-  create-odin cm-boot-$1 /out/$1/*/target/product/$1/boot.img
+  create-odin cm-boot-$1 /out/$1/$CM_WHICH/target/product/$1/boot.img
 )
 }
 
@@ -99,17 +102,22 @@ alias picassowifi-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-
 
 cm-status() {
 (
-    cd ~/cm-11.0
-    for f in `repo status | sed "s/^project //p;d" | sed "s/ .*//"`
+    cd $CM_SRC
+    for f in `repo status | sed "s/^project //p;d" | sed "s/ .*//" | egrep -v '^prebuilts/' | sort`
     do
         (
-             echo
-             echo "******* $f *****"
-             echo
              cd $f
-             git status
-             log github/cm-11.0..
-        )
+
+	     upstream=`repo info . | sed 's/Manifest merge branch: //p;d'`
+	     changes=`( git status --porcelain ; log github/$upstream.. ) 2>&1 | wc -l`
+	     if [ "$changes" != 0 ]; then
+                 echo
+                 echo "******* $f: $upstream: $changes updates *****"
+                 echo
+                 log github/$upstream..
+                 git status --porcelain
+	     fi
+        ) 2>&1
    done
 )
 }
@@ -117,19 +125,19 @@ cm-status() {
 # ------------------------
 
 flash-boot() {
-   boot=/out/$1/*/target/product/$1/boot.img
-   if [ ! -r $boot ]; then
+    boot=/out/$1/$CM_WHICH/target/product/$1/boot.img
+    if [ ! -r "$boot" ]; then
 	echo >&2 "error: Must specify build target and build it.  Failed to access:\n\t$boot"
-	exit 1
-   fi
-   dev=dw_mmc.0
-   if [ "$2" != "" ]; then
-	dev="$2"
-   else
-	dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
-   fi
-   adb push $boot /sdcard/boot.img
-   adb shell su -c "dd if=/sdcard/boot.img of=$dev"
+    else
+	dev=dw_mmc.0
+        if [ "$2" != "" ]; then
+	    dev="$2"
+        else
+	    dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
+        fi
+        adb push $boot /sdcard/boot.img
+        adb shell su -c "dd if=/sdcard/boot.img of=$dev"
+    fi
 }
 
 alias flash-boot-dlx='flash-boot dlx'
@@ -163,6 +171,16 @@ alias flash-recovery-picassowifi='flash-recovery picassowifi'
 
 # -----------------------------
 
+audit2allow-cm()
+{
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
+  audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
+}
+
+alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
+
+# -----------------------------
+
 tis-delta() {
     date
     adb shell su -c "cat $1" | dos2unix > /tmp/tis
@@ -176,3 +194,5 @@ alias tis-delta-cpu0="tis-delta /sys/devices/system/cpu/cpu0/cpufreq/stats/time_
 alias tis-delta-cpu1="tis-delta /sys/devices/system/cpu/cpu1/cpufreq/stats/time_in_state"
 alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_in_state"
 alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
+
+alias restart-adb='adb kill-server && sudo `which adb` start-server'

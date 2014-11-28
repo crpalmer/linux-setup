@@ -14,7 +14,7 @@ set nohlsearch
 " ---- make folder specific options ----
 if (expand('%:p') =~ "/kernel/")
 elseif (expand('%:p') =~ "\.mk$")
-elseif (expand('%:p') =~ "/cm-11.0/")
+elseif (expand('%:p') =~ "/cm-1[0-9].[0-9]/")
     set expandtab
     set sw=4
 endif
