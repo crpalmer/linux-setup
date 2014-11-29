@@ -109,6 +109,13 @@ cm-status() {
              cd $f
 
 	     upstream=`repo info . | sed 's/Manifest merge branch: //p;d'`
+	     revision=`repo info . | sed 's/Current revision: //p;d'`
+	     if echo $revision | egrep -q refs/heads/ ; then
+		:
+	     else
+	        upstream=$revision
+	     fi
+
 	     changes=`( git status --porcelain ; log github/$upstream.. ) 2>&1 | wc -l`
 	     if [ "$changes" != 0 ]; then
                  echo
@@ -119,7 +126,7 @@ cm-status() {
 	     fi
         ) 2>&1
    done
-)
+) | less
 }
 
 # ------------------------
@@ -178,6 +185,8 @@ audit2allow-cm()
 }
 
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
+alias audit2allow-picassowifi='audit2allow-cm picassowifi'
+alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/audit.log" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 
 # -----------------------------
 
