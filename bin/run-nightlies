@@ -1,10 +1,11 @@
 #!/bin/bash -i
 
 UNOFFICIAL="
-	device/samsung/tabpro-common
-	device/samsung/picassolte
 	device/samsung/mondrianlte
-	vendor/samsung/tabpro-common"
+	device/samsung/picassolte
+	device/samsung/tabpro-common
+	vendor/samsung/tabpro-common
+"
 
 changelog-name() {
    echo /tmp/changelog-`echo $1 | sed 's@/@_@g'`.txt
