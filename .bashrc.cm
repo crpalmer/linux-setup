@@ -82,7 +82,7 @@ release-cm() {
 release-nightly() {
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
   ssh download.crpalmer.org mkdir -p /nightlies/$1 && \
-  scp `ls -t $OUT_DIR_COMMON_BASE/*/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/nightlies/$1/
+  scp `ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/nightlies/$1/
 }
 
 build-cm-boot() {
