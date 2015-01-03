@@ -1,5 +1,7 @@
 # Aliases / scripts for CM work
 
+export PATH="$PATH:/opt/toolchains/linaro-4.8/bin/"
+
 alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` ; echo ; echo "*** ERRORS ***" ; echo ; egrep "error|leaving |CONFLICT" /tmp/sync.txt )'
 
 alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && cd ~/cm-11.0"
@@ -19,6 +21,14 @@ build-cm() {
     cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
   fi
 ) 2>&1 | tee /tmp/build-$1.txt
+}
+
+start-cm() {
+  export OUT_DIR_COMMON_BASE=/out/$1/ && \
+  echo $OUT_DIR_COMMON_BASE && \
+  cd $CM_SRC && \
+  . ./build/envsetup.sh && \
+  breakfast $1
 }
 
 release-cm() {
@@ -42,6 +52,11 @@ build-cm-boot() {
   mka bootimage && \
   boot-odin $1
 ) 2>&1 | tee /tmp/build-$1.txt
+}
+
+build-cm-boot-odin() {
+  build-cm-boot $1 && \
+  boot-odin $1
 }
 
 clean-cm() {
@@ -69,21 +84,25 @@ gdb-cm() {
 
 # -------------------------
 
+alias build-victara='build-cm victara'
+alias build-victara-boot='build-cm-boot victara'
+alias release-victara='release-cm victara'
+
 alias build-mondrianwifi='build-cm mondrianwifi'
 alias build-mondrianlte='build-cm mondrianlte'
-alias build-mondrianwifi-boot='build-cm-boot mondrianwifi'
-alias build-mondrianlte-boot='build-cm-boot mondrianlte'
+alias build-mondrianwifi-boot='build-cm-boot-odin mondrianwifi'
+alias build-mondrianlte-boot='build-cm-boot-odin mondrianlte'
 alias mondrianwifi-boot-odin='boot-odin mondrianwifi'
 alias mondrianlte-boot-odin='boot-odin mondrianlte'
 alias release-mondrianlte='release-cm mondrianlte'
 
 alias build-picassolte='build-cm picassolte'
-alias build-picassolte-boot='build-cm-boot picassolte'
+alias build-picassolte-boot='build-cm-boot-odin picassolte'
 alias picassolte-boot-odin='boot-odin picassolte'
 alias release-picassolte='release-cm picassolte'
 
 alias build-picassowifi='build-cm picassowifi'
-alias build-picassowifi-boot='build-cm-boot picassowifi'
+alias build-picassowifi-boot='build-cm-boot-odin picassowifi'
 alias picassowifi-boot-odin='boot-odin picassowifi'
 alias release-picassowifi='release-cm picassowifi'
 
@@ -155,11 +174,17 @@ flash-boot() {
     fi
 }
 
+flash-boot-fastboot() {
+    boot=/out/$1/$CM_WHICH/target/product/$1/boot.img
+    fastboot flash boot $boot
+}
+
 alias flash-boot-dlx='flash-boot dlx'
 alias flash-boot-hammerhead='flash-boot hammerhead'
 alias flash-boot-mondrianwifi='flash-boot mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/boot'
 alias flash-boot-picassolte='flash-boot picassolte'
 alias flash-boot-picassowifi='flash-boot picassowifi'
+alias flash-boot-victara='flash-boot-fastboot victara'
 
 # ------------------------
 
@@ -193,8 +218,11 @@ audit2allow-cm()
 }
 
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
+alias audit2allow-mondrianwifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
-alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/audit.log" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-victara='audit2allow-cm victara'
+alias audit2allow-victara-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
 
 # -----------------------------
 
@@ -213,6 +241,9 @@ alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_
 alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
 
 alias restart-adb='adb kill-server && sudo `which adb` start-server'
+adb-kill() {
+   adb shell su -c "kill `adb shell ps | grep $* | cut -c 9-15`"
+}
 
 generate-changelog() {
   cd $CM_SRC/$1
@@ -221,3 +252,25 @@ generate-changelog() {
   git tag $TAG
   git log --oneline --decorate
 }
+
+tag-finder() {
+    best=9999999999
+    tag=""
+
+    for commit in $(git tag -l $1)
+    do
+        match=$(git diff $commit --shortstat | awk -F' ' '{print $4 + $6}')
+        echo $commit has $match lines changed
+
+        if [ $match -lt $best ]; then
+            best=$match
+            tag=$commit
+            echo $tag is the new best match with $best lines changed
+        fi
+    done
+
+    echo "Best match"
+    echo TAG : $tag
+    echo Lines Changed : $best
+}
+
