@@ -1,5 +1,7 @@
 # git aliases / scripts
 
+git config --global core.excludesfile ~/.gitignore
+
 alias log='git log --oneline --no-merges'
 alias logr='git log --reverse --oneline --no-merges'
 
