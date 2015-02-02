@@ -205,7 +205,7 @@ flash-boot-fastboot() {
 alias flash-boot-dlx='flash-boot dlx'
 alias flash-boot-hammerhead='flash-boot hammerhead'
 alias flash-boot-mondrianwifi='flash-boot mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/boot'
-alias flash-boot-picassolte='flash-boot picassolte'
+alias flash-boot-picassolte='flash-boot picassolte /dev/block/platform/msm_sdcc.1/by-name/boot'
 alias flash-boot-picassowifi='flash-boot picassowifi'
 alias flash-boot-victara='flash-boot-fastboot victara'
 
