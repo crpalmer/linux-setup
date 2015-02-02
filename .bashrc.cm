@@ -301,3 +301,4 @@ tag-finder() {
     echo Lines Changed : $best
 }
 
+alias gc-prima='gc --strategy=subtree --strategy-option subtree=drivers/staging/prima'
