@@ -24,12 +24,35 @@ build-cm() {
 }
 
 start-cm() {
-  export OUT_DIR_COMMON_BASE=/out/$1/ && \
-  echo $OUT_DIR_COMMON_BASE && \
-  cd $CM_SRC && \
-  . ./build/envsetup.sh && \
+  if [ "$BASE_PS1" = "" ]; then
+     export BASE_PS1="$PS1"
+  fi
+  export PS1="[$1] $BASE_PS1"
+
+  export OUT_DIR_COMMON_BASE=/out/$1/
+  cd $CM_SRC
+  . ./build/envsetup.sh
   breakfast $1
+
+  export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
+
+  if [ "$1" = "mondrianwifi" ]; then
+    export ANDROID_SERIAL=1019440c06792b29
+  elif [ "$1" = "picassolte" ]; then
+    export ANDROID_SERIAL=1ed18fed
+  elif [ "$1" = "victara" ]; then
+    export ANDROID_SERIAL=TA98903JFQ
+  elif [ "ANDROID_SERIAL" != "" ]; then
+    echo "*** Current using device: $ANDROID_SERIAL"
+  fi
 }
+
+alias start-dlx="start-cm dlx"
+alias start-hammerhead="start-cm hammerhead"
+alias start-mondrianwifi="start-cm mondrianwifi"
+alias start-picassolte="start-cm picassolte"
+alias start-picassowifi="start-cm picassowifi"
+alias start-victara="start-cm-victara"
 
 release-cm() {
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
