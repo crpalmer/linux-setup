@@ -240,8 +240,12 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
+alias audit2allow-dlx='audit2allow-cm dlx'
+alias audit2allow-dlx-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
 alias audit2allow-mondrianwifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
+alias audit2allow-picassolte='audit2allow-cm picassolte'
+alias audit2allow-picassolte-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
 alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 alias audit2allow-victara='audit2allow-cm victara'
