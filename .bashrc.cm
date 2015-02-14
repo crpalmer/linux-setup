@@ -202,12 +202,13 @@ flash-boot() {
         fi
         adb push $boot /sdcard/boot.img
         adb shell su -c "dd if=/sdcard/boot.img of=$dev"
+	adb reboot
     fi
 }
 
 flash-boot-fastboot() {
     boot=/out/$1/$CM_WHICH/target/product/$1/boot.img
-    fastboot flash boot $boot
+    fastboot flash boot $boot && fastboot reboot
 }
 
 alias flash-boot-dlx='flash-boot dlx'
