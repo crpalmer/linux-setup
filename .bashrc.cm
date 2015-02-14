@@ -42,9 +42,17 @@ start-cm() {
     export ANDROID_SERIAL=1ed18fed
   elif [ "$1" = "victara" ]; then
     export ANDROID_SERIAL=TA98903JFQ
+  elif [ "$1" = "dlx" ]; then
+    export ANDROID_SERIAL=FA2BLS506023
+  elif [ "$1" = "picassowifi" ]; then
+    export ANDROID_SERIAL=32044d1a104eb0db
+  elif [ "$1" = "hammerhead" ]; then
+    export ANDROID_SERIAL=03a3e4ad437cbd9b
   elif [ "ANDROID_SERIAL" != "" ]; then
     echo "*** Current using device: $ANDROID_SERIAL"
   fi
+
+  CM_DEVICE=$1
 }
 
 alias start-dlx="start-cm dlx"
