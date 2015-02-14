@@ -37,23 +37,23 @@ start-cm() {
   export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
 
   case "$1" in
+  dlx)
+    export ANDROID_SERIAL=FA2BLS506023
+    ;;
+  hammerhead)
+    export ANDROID_SERIAL=03a3e4ad437cbd9b
+    ;;
   mondrianwifi)
     export ANDROID_SERIAL=1019440c06792b29
     ;;
   picassolte)
     export ANDROID_SERIAL=1ed18fed
     ;;
-  victara)
-    export ANDROID_SERIAL=TA98903JFQ
-    ;;
-  dlx)
-    export ANDROID_SERIAL=FA2BLS506023
-    ;;
   picassowifi)
     export ANDROID_SERIAL=32044d1a104eb0db
     ;;
-  hammerhead)
-    export ANDROID_SERIAL=03a3e4ad437cbd9b
+  victara)
+    export ANDROID_SERIAL=TA98903JFQ
     ;;
   *)
     echo "*** Current using device: $ANDROID_SERIAL"
