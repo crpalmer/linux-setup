@@ -60,7 +60,7 @@ alias start-hammerhead="start-cm hammerhead"
 alias start-mondrianwifi="start-cm mondrianwifi"
 alias start-picassolte="start-cm picassolte"
 alias start-picassowifi="start-cm picassowifi"
-alias start-victara="start-cm-victara"
+alias start-victara="start-cm victara"
 
 logcat() {
    adb logcat -v time | tee /tmp/lc.$CM_DEVICE
