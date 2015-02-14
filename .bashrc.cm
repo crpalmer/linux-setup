@@ -36,21 +36,29 @@ start-cm() {
 
   export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
 
-  if [ "$1" = "mondrianwifi" ]; then
+  case "$1" in
+  mondrianwifi)
     export ANDROID_SERIAL=1019440c06792b29
-  elif [ "$1" = "picassolte" ]; then
+    ;;
+  picassolte)
     export ANDROID_SERIAL=1ed18fed
-  elif [ "$1" = "victara" ]; then
+    ;;
+  victara)
     export ANDROID_SERIAL=TA98903JFQ
-  elif [ "$1" = "dlx" ]; then
+    ;;
+  dlx)
     export ANDROID_SERIAL=FA2BLS506023
-  elif [ "$1" = "picassowifi" ]; then
+    ;;
+  picassowifi)
     export ANDROID_SERIAL=32044d1a104eb0db
-  elif [ "$1" = "hammerhead" ]; then
+    ;;
+  hammerhead)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
-  elif [ "ANDROID_SERIAL" != "" ]; then
+    ;;
+  *)
     echo "*** Current using device: $ANDROID_SERIAL"
-  fi
+    ;;
+  esac
 
   CM_DEVICE=$1
 }
