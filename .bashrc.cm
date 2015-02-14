@@ -62,6 +62,10 @@ alias start-picassolte="start-cm picassolte"
 alias start-picassowifi="start-cm picassowifi"
 alias start-victara="start-cm-victara"
 
+logcat() {
+   adb logcat -v time | tee /tmp/lc.$CM_DEVICE
+}
+
 release-cm() {
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
   scp `ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
