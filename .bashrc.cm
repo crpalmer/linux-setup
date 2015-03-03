@@ -130,7 +130,7 @@ release-nightly() {
   export OUT_DIR_COMMON_BASE=/out/$1/
   D=/nightlies/$1-$CM_WHICH
   if [ "`ssh download.crpalmer.org ls -d $D`" = "" ]; then
-    D=/nightlies/$i
+    D=/nightlies/$1
     ssh download.crpalmer.org mkdir -p $D
   fi
   F=`ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
