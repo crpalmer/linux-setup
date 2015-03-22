@@ -39,21 +39,33 @@ start-cm() {
   case "$1" in
   dlx)
     export ANDROID_SERIAL=FA2BLS506023
+    export D=$CM_SRC/device/htc/$1
+    export K=$CM_SRC/kernel/htc/m7
     ;;
-  hammerhead)
+  hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
+    export D=$CM_SRC/device/lge/$1
+    export K=$CM_SRC/kernel/lge/hammerhead
     ;;
   mondrianwifi)
     export ANDROID_SERIAL=1019440c06792b29
+    export D=$CM_SRC/device/samsung/$1
+    export K=$CM_SRC/kernel/samsung/mondrianwifi
     ;;
   picassolte)
     export ANDROID_SERIAL=1ed18fed
+    export D=$CM_SRC/device/samsung/$1
+    export K=$CM_SRC/kernel/samsung/mondrianwifi
     ;;
   picassowifi)
     export ANDROID_SERIAL=32044d1a104eb0db
+    export D=$CM_SRC/device/samsung/$1
+    export K=$CM_SRC/kernel/samsung/exynos5420
     ;;
   victara)
     export ANDROID_SERIAL=TA98903JFQ
+    export D=$CM_SRC/device/motorola/$1
+    export K=$CM_SRC/kernel/motorola/msm8974
     ;;
   *)
     echo "*** Current using device: $ANDROID_SERIAL"
@@ -70,8 +82,19 @@ alias start-picassolte="start-cm picassolte"
 alias start-picassowifi="start-cm picassowifi"
 alias start-victara="start-cm victara"
 
+adb-forward() {
+  for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
+  do
+    adb forward tcp:$i tcp:$i
+  done
+}
+
 logcat() {
-   adb logcat -v time | tee /tmp/lc.$CM_DEVICE
+   adb logcat -v time $* | tee /tmp/lc.$CM_DEVICE
+}
+
+cm-dmesg() {
+   adb wait-for-device && adb shell su -c "cat /proc/kmsg" | tee /tmp/dm.$CM_DEVICE
 }
 
 release-cm() {
@@ -240,7 +263,11 @@ alias flash-boot-victara='flash-boot-fastboot victara'
 # ------------------------
 
 flash-recovery() {
-   recovery=/out/$1/*/target/product/$1/recovery.img
+   if [ "$3" != "" ]; then
+      recovery="$3"
+   else
+      recovery=/out/$1/*/target/product/$1/recovery.img
+   fi
    if [ ! -r $recovery ]; then
 	echo >&2 "error: Must specify build target and build it.  Failed to access:\n\t$recovery"
 	exit 1
@@ -256,8 +283,8 @@ flash-recovery() {
 
 alias flash-recovery-dlx='flash-recovery dlx'
 alias flash-recovery-hammerhead='flash-recovery hammerhead'
-alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery'
-alias flash-recovery-picassolte='flash-recovery picassolte'
+alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery $*'
+alias flash-recovery-picassolte='flash-recovery picassolte /dev/block/platform/msm_sdcc.1/by-name/recovery'
 alias flash-recovery-picassowifi='flash-recovery picassowifi'
 
 # -----------------------------
@@ -330,3 +357,20 @@ tag-finder() {
 }
 
 alias gc-prima='gc --strategy=subtree --strategy-option subtree=drivers/staging/prima'
+
+gc-prima-series() {
+  logr $* | while read commit
+  do
+    sha1=`echo $commit | cut -d ' ' -f 1`
+    if ! gc-prima --allow-empty $sha1
+    then
+      echo
+      echo
+      echo $commit
+      echo -n "Conflicts, resolve and hit enter: "
+      read < /dev/tty
+      git commit --allow-empty --reuse-message=$sha1
+      gc --abort 2>/dev/null
+    fi
+  done
+}
