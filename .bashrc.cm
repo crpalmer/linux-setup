@@ -6,8 +6,9 @@ alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync
 
 alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && cd ~/cm-11.0"
 alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && cd ~/cm-12.0"
+alias start-cm-12.1="export CM_WHICH=cm-12.1 CM_SRC=~/cm-12.1 && cd ~/cm-12.1"
 
-start-cm-12.0
+start-cm-12.1
 
 build-cm() {
 (
