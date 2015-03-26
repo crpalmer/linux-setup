@@ -38,6 +38,14 @@ build-cm() {
 }
 
 start-cm() {
+  if [ "$2" == "12.0" ]; then
+     start-cm-12.0
+  elif [ "$2" = "12.1" ]; then
+     start-cm-12.1
+  elif [ "$2" != "" ]; then
+     echo >&2 'Invalid argument [$2]'
+  fi
+
   if [ "$BASE_PS1" = "" ]; then
      export BASE_PS1="$PS1"
   fi
@@ -89,12 +97,12 @@ start-cm() {
   CM_DEVICE=$1
 }
 
-alias start-dlx="start-cm dlx"
-alias start-hammerhead="start-cm hammerhead"
-alias start-mondrianwifi="start-cm mondrianwifi"
-alias start-picassolte="start-cm picassolte"
-alias start-picassowifi="start-cm picassowifi"
-alias start-victara="start-cm victara"
+alias start-dlx="start-cm dlx $*"
+alias start-hammerhead="start-cm hammerhead $*"
+alias start-mondrianwifi="start-cm mondrianwifi $*"
+alias start-picassolte="start-cm picassolte $*"
+alias start-picassowifi="start-cm picassowifi $*"
+alias start-victara="start-cm victara $*"
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
