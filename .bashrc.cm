@@ -326,6 +326,7 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
+alias audit2allow-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
 alias audit2allow-dlx-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
