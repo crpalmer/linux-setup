@@ -53,8 +53,10 @@ start-cm() {
 
   export OUT_DIR_COMMON_BASE=/out/$1/
   cd $CM_SRC
-  . ./build/envsetup.sh
-  breakfast $1
+  if [ `hostname` = compile ]; then
+     . ./build/envsetup.sh
+     breakfast $1
+  fi
 
   export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
 
