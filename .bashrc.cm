@@ -264,8 +264,17 @@ flash-boot() {
         else
 	    dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
         fi
+	state="`adb get-state`"
+	if [ "$state" != recovery ]; then
+	    adb root
+	    echo "Waiting for device"
+	    adb wait-for-device
+	fi
+	echo "Pushing $boot"
         adb push $boot /sdcard/boot.img
-        adb shell su -c "dd if=/sdcard/boot.img of=$dev"
+	echo "Flashing to $dev"
+        adb shell dd if=/sdcard/boot.img of=$dev
+	echo "Rebooting"
 	adb reboot
     fi
 }
