@@ -19,11 +19,17 @@ start-cm-12.1
 
 build-cm() {
 (
+  if [ "$2" = "" ]; then
+     target="$1"
+  else
+     target="$2"
+  fi
+
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
   echo $OUT_DIR_COMMON_BASE && \
   cd $CM_SRC && \
   . ./build/envsetup.sh && \
-  brunch $1 && \
+  brunch $target && \
   if [ -e /mnt/roms ]; then
     mkdir -p /mnt/roms/$1 && \
     cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
@@ -166,11 +172,14 @@ gdb-cm() {
 # -------------------------
 
 alias build-victara='build-cm victara'
+alias build-victara-eng='build-cm victara cm_victara-eng'
 alias build-victara-boot='build-cm-boot victara'
 alias release-victara='release-cm victara'
 
 alias build-mondrianwifi='build-cm mondrianwifi'
 alias build-mondrianlte='build-cm mondrianlte'
+alias build-mondrianwifi-eng='build-cm mondrianwifi cm_mondrianwifi-eng'
+alias build-mondrianlte-eng='build-cm mondrianlte cm_mondrianlte-eng'
 alias build-mondrianwifi-boot='build-cm-boot-odin mondrianwifi'
 alias build-mondrianlte-boot='build-cm-boot-odin mondrianlte'
 alias mondrianwifi-boot-odin='boot-odin mondrianwifi'
@@ -178,23 +187,28 @@ alias mondrianlte-boot-odin='boot-odin mondrianlte'
 alias release-mondrianlte='release-cm mondrianlte'
 
 alias build-picassolte='build-cm picassolte'
+alias build-picassolte-eng='build-cm picassolte cm_picassolte-eng'
 alias build-picassolte-boot='build-cm-boot-odin picassolte'
 alias picassolte-boot-odin='boot-odin picassolte'
 alias release-picassolte='release-cm picassolte'
 
 alias build-picassowifi='build-cm picassowifi'
+alias build-picassowifi-eng='build-cm picassowifi cm_picassowifi-eng'
 alias build-picassowifi-boot='build-cm-boot-odin picassowifi'
 alias picassowifi-boot-odin='boot-odin picassowifi'
 alias release-picassowifi='release-cm picassowifi'
 
 alias build-dlx='build-cm dlx'
+alias build-dlx-eng='build-cm dlx cm_dlx-eng'
 alias build-dlx-boot='build-cm-boot dlx'
 alias release-dlx='release-cm dlx'
 
 alias build-hh='build-cm hammerhead'
+alias build-hh-eng='build-cm hammerhead cm_hammerhead-eng'
 alias build-hh-boot='build-cm-boot hammerhead'
 alias release-hh='release-cm hammerhead'
 alias build-hammerhead='build-cm hammerhead'
+alias build-hammerhead-eng='build-cm hammerhead cm_hammerhead-eng'
 alias build-hammerhead-boot='build-cm-boot hammerhead'
 alias release-hammerhead='release-cm hammerhead'
 
