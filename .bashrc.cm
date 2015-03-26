@@ -6,10 +6,10 @@ alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync
 
 cm-adb() {
    export -n ANDROID_HOST_OUT
-   /home/crpalmer/android-sdk-linux/platform-tools/adb $*
+   /home/crpalmer/android-sdk-linux/platform-tools/adb "$@"
 }
 
-alias adb=cm-adb
+alias adb='cm-adb "$@"'
 
 alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && cd ~/cm-11.0"
 alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && cd ~/cm-12.0"
@@ -99,12 +99,12 @@ start-cm() {
   CM_DEVICE=$1
 }
 
-alias start-dlx="start-cm dlx $*"
-alias start-hammerhead="start-cm hammerhead $*"
-alias start-mondrianwifi="start-cm mondrianwifi $*"
-alias start-picassolte="start-cm picassolte $*"
-alias start-picassowifi="start-cm picassowifi $*"
-alias start-victara="start-cm victara $*"
+alias start-dlx='start-cm dlx "$@"'
+alias start-hammerhead='start-cm hammerhead "$@"'
+alias start-mondrianwifi='start-cm mondrianwifi "$@"'
+alias start-picassolte='start-cm picassolte "$@"'
+alias start-picassowifi='start-cm picassowifi "$@"'
+alias start-victara='start-cm victara "$@"'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
@@ -114,7 +114,7 @@ adb-forward() {
 }
 
 logcat() {
-   adb logcat -v time $* | tee /tmp/lc.$CM_DEVICE
+   adb logcat -v time "$@" | tee /tmp/lc.$CM_DEVICE
 }
 
 cm-dmesg() {
@@ -324,7 +324,7 @@ flash-recovery() {
 
 alias flash-recovery-dlx='flash-recovery dlx'
 alias flash-recovery-hammerhead='flash-recovery hammerhead'
-alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery $*'
+alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery "$@"'
 alias flash-recovery-picassolte='flash-recovery picassolte /dev/block/platform/msm_sdcc.1/by-name/recovery'
 alias flash-recovery-picassowifi='flash-recovery picassowifi'
 
@@ -366,7 +366,7 @@ alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_
 
 alias restart-adb='adb kill-server && sudo `which adb` start-server'
 adb-kill() {
-   adb shell su -c "kill `adb shell ps | grep $* | cut -c 9-15`"
+   adb shell su -c "kill `adb shell ps | grep "$@" | cut -c 9-15`"
 }
 
 generate-changelog() {
@@ -401,7 +401,7 @@ tag-finder() {
 alias gc-prima='gc --strategy=subtree --strategy-option subtree=drivers/staging/prima'
 
 gc-prima-series() {
-  logr $* | while read commit
+  logr "$@" | while read commit
   do
     sha1=`echo $commit | cut -d ' ' -f 1`
     if ! gc-prima --allow-empty $sha1
