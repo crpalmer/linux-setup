@@ -274,18 +274,20 @@ flash-boot() {
         else
 	    dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
         fi
-	state="`adb get-state`"
+	echo "Getting the current device state"
+	state="`cm-adb get-state`"
 	if [ "$state" != recovery ]; then
-	    adb root
+	    echo "Restarting as root"
+	    cm-adb root
 	    echo "Waiting for device"
-	    adb wait-for-device
+	    cm-adb wait-for-device
 	fi
 	echo "Pushing $boot"
-        adb push $boot /sdcard/boot.img
+        cm-adb push $boot /sdcard/boot.img
 	echo "Flashing to $dev"
-        adb shell dd if=/sdcard/boot.img of=$dev
+        cm-adb shell dd if=/sdcard/boot.img of=$dev
 	echo "Rebooting"
-	adb reboot
+	cm-adb reboot
     fi
 }
 
@@ -318,8 +320,8 @@ flash-recovery() {
    else
 	dev="/dev/block/platform/dw_mmc.0/by-name/RECOVERY"
    fi
-   adb push $recovery /sdcard/recovery.img
-   adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
+   cm-adb push $recovery /sdcard/recovery.img
+   cm-adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
 }
 
 alias flash-recovery-dlx='flash-recovery dlx'
@@ -336,23 +338,23 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
-alias audit2allow-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
+alias audit2allow-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
-alias audit2allow-dlx-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
+alias audit2allow-dlx-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
-alias audit2allow-mondrianwifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
+alias audit2allow-mondrianwifi-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
 alias audit2allow-picassolte='audit2allow-cm picassolte'
-alias audit2allow-picassolte-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
+alias audit2allow-picassolte-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
-alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-picassowifi-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 alias audit2allow-victara='audit2allow-cm victara'
-alias audit2allow-victara-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
+alias audit2allow-victara-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
 
 # -----------------------------
 
 tis-delta() {
     date
-    adb shell su -c "cat $1" | dos2unix > /tmp/tis
+    cm-adb shell su -c "cat $1" | dos2unix > /tmp/tis
     join -j 1 -t ' ' /tmp/tis.last /tmp/tis | \
 	awk '{ if ($3 != $2) printf("%d %d\n", $1, $3 - $2); }'
     cp /tmp/tis /tmp/tis.last
@@ -364,9 +366,9 @@ alias tis-delta-cpu1="tis-delta /sys/devices/system/cpu/cpu1/cpufreq/stats/time_
 alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_in_state"
 alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
 
-alias restart-adb='adb kill-server && sudo `which adb` start-server'
+alias restart-adb='cm-adb kill-server && sudo `which adb` start-server'
 adb-kill() {
-   adb shell su -c "kill `adb shell ps | grep "$@" | cut -c 9-15`"
+   cm-adb shell su -c "kill `cm-adb shell ps | grep "$@" | cut -c 9-15`"
 }
 
 generate-changelog() {
