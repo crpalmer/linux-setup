@@ -71,7 +71,7 @@ start-cm() {
     export D=$CM_SRC/device/lge/$1
     export K=$CM_SRC/kernel/lge/hammerhead
     ;;
-  mondrianwifi)
+  mondrianwifi|mondrianlte)
     export ANDROID_SERIAL=1019440c06792b29
     export D=$CM_SRC/device/samsung/$1
     export K=$CM_SRC/kernel/samsung/mondrianwifi
