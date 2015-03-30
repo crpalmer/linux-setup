@@ -368,7 +368,17 @@ alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_
 
 alias restart-adb='cm-adb kill-server && sudo `which adb` start-server'
 adb-kill() {
-   cm-adb shell su -c "kill `cm-adb shell ps | grep "$@" | cut -c 9-15`"
+ for who in $@; do
+   pids=`cm-adb shell ps | grep "$who" | cut -c 10-15`
+   if [ "$pids" = "" ]; then
+     echo "Nothing to kill"
+   else
+     for pid in $pids; do
+       echo "Killing pid $pid"
+       cm-adb shell su -c "kill $pid"
+     done
+   fi
+ done
 }
 
 generate-changelog() {
