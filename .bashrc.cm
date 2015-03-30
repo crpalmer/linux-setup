@@ -428,3 +428,26 @@ gc-prima-series() {
     fi
   done
 }
+
+push-local-file() {
+  dir="$1"
+  shift
+  full_file="$1"
+  shift
+
+  if [ "$1" = "" ]; then
+     perms=644
+  else
+     perms=$1
+  fi
+
+  file=`basename $full_file`
+  echo "Pushing: $dir/$file"
+  cm-adb push "$full_file" /sdcard/$file
+  cm-adb shell su -c "mount -o remount,rw /system"
+  cm-adb shell su -c "mv $dir/$file $dir/$file.old"
+  cm-adb shell su -c "cp '/sdcard/$file' '$dir/'"
+  cm-adb shell su -c "chmod $perms $dir/$file"
+  cm-adb shell su -c "restorecon -v $dir/$file"
+  cm-adb shell su -c "mount -o remount,ro /system"
+}
