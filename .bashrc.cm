@@ -1,6 +1,6 @@
 # Aliases / scripts for CM work
 
-export PATH="$PATH:/opt/toolchains/linaro-4.8/bin/"
+export PATH="$PATH:/opt/toolchains/linaro-4.8/bin/:/home/crpalmer/android-sdk-linux/platform-tools"
 
 alias sync-cm='( cd $CM_SRC && repo sync 2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` ; echo ; echo "*** ERRORS ***" ; echo ; egrep "error|leaving |CONFLICT" /tmp/sync.txt )'
 
