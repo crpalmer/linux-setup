@@ -35,8 +35,8 @@ push-changelogs() {
 
   start-cm-12.0
   sync-cm
-  build-cm victara
-  release-nightly victara
+#  build-cm victara
+#  release-nightly victara
   build-cm mondrianlte
   release-nightly mondrianlte
   build-cm picassolte
@@ -49,8 +49,8 @@ push-changelogs() {
   release-nightly mondrianlte
   build-cm picassolte
   release-nightly picassolte
-#  build-cm mondrianwifi
-#  release-nightly mondrianwifi
+  build-cm mondrianwifi
+  release-nightly mondrianwifi
 
   push-changelogs
 ) > /tmp/nightlies.txt 2>&1
