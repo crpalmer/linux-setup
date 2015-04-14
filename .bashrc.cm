@@ -87,7 +87,7 @@ start-cm() {
     export K=$CM_SRC/kernel/samsung/exynos5420
     ;;
   victara)
-    export ANDROID_SERIAL=TA98903JFQ
+    export ANDROID_SERIAL=TA98903O0Y
     export D=$CM_SRC/device/motorola/$1
     export K=$CM_SRC/kernel/motorola/msm8974
     ;;
