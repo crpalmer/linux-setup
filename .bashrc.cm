@@ -86,6 +86,11 @@ start-cm() {
     export D=$CM_SRC/device/samsung/$1
     export K=$CM_SRC/kernel/samsung/exynos5420
     ;;
+  tetra|tetratwrp)
+    export ANDROID_SERIAL=14442D48F8902AE
+    export D=$CM_SRC/device/sony/$1
+    #export K=$CM_SRC/kernel/sony/tetra
+    ;;
   victara)
     export ANDROID_SERIAL=TA98903O0Y
     export D=$CM_SRC/device/motorola/$1
@@ -104,6 +109,7 @@ alias start-hammerhead='start-cm hammerhead "$@"'
 alias start-mondrianwifi='start-cm mondrianwifi "$@"'
 alias start-picassolte='start-cm picassolte "$@"'
 alias start-picassowifi='start-cm picassowifi "$@"'
+alias start-tetratwrp='start-cm tetratwrp "$@"'
 alias start-victara='start-cm victara "$@"'
 
 adb-forward() {
