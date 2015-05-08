@@ -411,6 +411,7 @@ tag-finder() {
 }
 
 alias gc-prima='gc --strategy=subtree --strategy-option subtree=drivers/staging/prima'
+alias merge-prima='git merge --strategy=subtree --strategy-option subtree=drivers/staging/prima'
 
 gc-prima-series() {
   logr "$@" | while read commit
