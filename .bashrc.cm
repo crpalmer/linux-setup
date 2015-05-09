@@ -89,7 +89,7 @@ start-cm() {
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
     export D=$CM_SRC/device/sony/$1
-    #export K=$CM_SRC/kernel/sony/tetra
+    export K=$CM_SRC/kernel/sony/tetra
     ;;
   victara)
     export ANDROID_SERIAL=TA98903O0Y
