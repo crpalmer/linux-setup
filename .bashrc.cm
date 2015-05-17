@@ -109,6 +109,7 @@ alias start-hammerhead='start-cm hammerhead "$@"'
 alias start-mondrianwifi='start-cm mondrianwifi "$@"'
 alias start-picassolte='start-cm picassolte "$@"'
 alias start-picassowifi='start-cm picassowifi "$@"'
+alias start-tetra='start-cm tetra "$@"'
 alias start-tetratwrp='start-cm tetratwrp "$@"'
 alias start-victara='start-cm victara "$@"'
 
@@ -191,6 +192,10 @@ alias build-victara='build-cm victara'
 alias build-victara-eng='build-cm victara cm_victara-eng'
 alias build-victara-boot='build-cm-boot victara'
 alias release-victara='release-cm victara'
+
+alias build-tetra='build-cm tetra'
+alias build-tetra-boot='build-cm-boot tetra'
+alias release-tetra='release-cm tetra'
 
 alias build-mondrianwifi='build-cm mondrianwifi'
 alias build-mondrianlte='build-cm mondrianlte'
