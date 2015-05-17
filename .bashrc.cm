@@ -124,6 +124,10 @@ logcat() {
    adb logcat -v time "$@" | tee /tmp/lc.$CM_DEVICE
 }
 
+logcat-radio() {
+   adb logcat -b radio -v time "$@" | tee /tmp/lc.$CM_DEVICE.radio
+}
+
 cm-dmesg() {
    adb wait-for-device && adb shell su -c "cat /proc/kmsg" | tee /tmp/dm.$CM_DEVICE
 }
