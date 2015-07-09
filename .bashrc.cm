@@ -71,7 +71,7 @@ start-cm() {
     export ANDROID_SERIAL=F5AZFG10C192
     export D=$CM_SRC/device/asus/moorefield/$1
     export K=$CM_SRC/kernel/asus/moorefield
-    export STOCK=/data/zenfone2/firmware/UL-Z00A-WW-2.18.40.12-user
+    export STOCK=/data/zenfone2/firmware/current
     ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
