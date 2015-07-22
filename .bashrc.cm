@@ -67,9 +67,9 @@ start-cm() {
     export D=$CM_SRC/device/htc/$1
     export K=$CM_SRC/kernel/htc/m7
     ;;
-  fhd)
+  Z00A)
     export ANDROID_SERIAL=F5AZFG10C192
-    export D=$CM_SRC/device/asus/moorefield/$1
+    export D=$CM_SRC/device/asus/$1
     export K=$CM_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
@@ -112,7 +112,7 @@ start-cm() {
 }
 
 alias start-dlx='start-cm dlx "$@"'
-alias start-fhd='start-cm fhd "$@"'
+alias start-Z00A='start-cm Z00A "$@"'
 alias start-hammerhead='start-cm hammerhead "$@"'
 alias start-mondrianwifi='start-cm mondrianwifi "$@"'
 alias start-picassolte='start-cm picassolte "$@"'
@@ -236,10 +236,10 @@ alias build-dlx-eng='build-cm dlx cm_dlx-eng'
 alias build-dlx-boot='build-cm-boot dlx'
 alias release-dlx='release-cm dlx'
 
-alias build-fhd='build-cm fhd'
-alias build-fhd-eng='build-cm fhd cm_fhd-eng'
-alias build-fhd-boot='build-cm-boot fhd'
-alias release-fhd='release-cm fhd'
+alias build-Z00A='build-cm Z00A'
+alias build-Z00A-eng='build-cm Z00A cm_Z00A-eng'
+alias build-Z00A-boot='build-cm-boot Z00A'
+alias release-Z00A='release-cm Z00A'
 
 alias build-hh='build-cm hammerhead'
 alias build-hh-eng='build-cm hammerhead cm_hammerhead-eng'
