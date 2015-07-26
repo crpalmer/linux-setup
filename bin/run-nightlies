@@ -34,7 +34,13 @@ push-changelogs() {
   rm -rf /out/*
 
   start-cm-12.1
+
   sync-cm
+  if [ "$?" != 0 ]; then
+    echo "Problems syncing"
+    exit 1
+  fi
+
   (start-Z00A ; \
 	repopick 103773; \
 	repopick 101970 102426 102725 103343 103928 ; \
