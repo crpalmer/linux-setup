@@ -45,19 +45,17 @@ push-changelogs() {
 	repopick 103773; \
 	repopick 101970 102426 102725 103343 103928 ; \
 	cd $D ; \
-	./extract-files.sh /data/zenfone2/firmware/current \
+	./extract-files.sh /data/zenfone2/firmware/current ; \
+   start-cm Z008; \
+	cd $D ; \
+	./extract-files.sh /data/zenfone2/firmware/current-Z008 \
   )
+  build-cm Z00A
+  release-nightly Z00A
+  build-cm Z008
+  release-nightly Z008
   build-cm mondrianlte
   release-nightly mondrianlte
   build-cm picassolte
   release-nightly picassolte
-  build-cm Z00A
-  release-nightly Z00A
-
-  start-cm-11.0
-  sync-cm
-  build-cm mondrianwifi
-  release-nightly mondrianwifi
-  push-changelogs
-
 ) > /tmp/nightlies.txt 2>&1
