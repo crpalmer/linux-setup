@@ -65,6 +65,7 @@ start-cm() {
   dlx)
     export ANDROID_SERIAL=FA2BLS506023
     export D=$CM_SRC/device/htc/$1
+    export V=$CM_SRC/vendor/htc/$1
     export K=$CM_SRC/kernel/htc/m7
     ;;
   Z008)
@@ -76,37 +77,44 @@ start-cm() {
   Z00A)
     export ANDROID_SERIAL=F5AZFG10C192
     export D=$CM_SRC/device/asus/$1
+    export V=$CM_SRC/vendor/asus/$1
     export K=$CM_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
     export D=$CM_SRC/device/lge/$1
+    export V=$CM_SRC/vendor/lge/$1
     export K=$CM_SRC/kernel/lge/hammerhead
     ;;
   mondrianwifi|mondrianlte)
     export ANDROID_SERIAL=1019440c06792b29
     export D=$CM_SRC/device/samsung/$1
+    export V=$CM_SRC/vendor/samsung/$1
     export K=$CM_SRC/kernel/samsung/mondrianwifi
     ;;
   picassolte)
     export ANDROID_SERIAL=1ed18fed
     export D=$CM_SRC/device/samsung/$1
+    export V=$CM_SRC/vendor/samsung/$1
     export K=$CM_SRC/kernel/samsung/mondrianwifi
     ;;
   picassowifi)
     export ANDROID_SERIAL=32044d1a104eb0db
     export D=$CM_SRC/device/samsung/$1
+    export V=$CM_SRC/vendor/samsung/$1
     export K=$CM_SRC/kernel/samsung/exynos5420
     ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
     export D=$CM_SRC/device/sony/$1
+    export V=$CM_SRC/vendor/sony/$1
     export K=$CM_SRC/kernel/sony/tetra
     ;;
   victara)
     export ANDROID_SERIAL=TA98903O0Y
     export D=$CM_SRC/device/motorola/$1
+    export V=$CM_SRC/vendor/motorola/$1
     export K=$CM_SRC/kernel/motorola/msm8974
     ;;
   *)
