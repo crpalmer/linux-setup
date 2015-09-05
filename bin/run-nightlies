@@ -42,7 +42,6 @@ push-changelogs() {
   fi
 
   (start-Z00A ; \
-	repopick 103773; \
 	repopick 101970 102426 102725 103343 103928 ; \
   )
   build-cm Z00A
