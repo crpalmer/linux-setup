@@ -4,13 +4,6 @@ export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchai
 
 alias sync-cm='( cd $CM_SRC && (echo "---- FETCHING -----" && repo sync -n && echo "----- SYNCING SOURCE ------" && repo sync -l )2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` )'
 
-cm-adb() {
-   export -n ANDROID_HOST_OUT
-   /home/crpalmer/android-sdk-linux/platform-tools/adb "$@"
-}
-
-alias adb='cm-adb "$@"'
-
 alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && cd ~/cm-11.0"
 alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && cd ~/cm-12.0"
 alias start-cm-12.1="export CM_WHICH=cm-12.1 CM_SRC=~/cm-12.1 && cd ~/cm-12.1"
@@ -321,19 +314,19 @@ flash-boot() {
 	    dev="/dev/block/platform/dw_mmc.0/by-name/BOOT"
         fi
 	echo "Getting the current device state"
-	state="`cm-adb get-state`"
+	state="`adb get-state`"
 	if [ "$state" != recovery ]; then
 	    echo "Restarting as root"
-	    cm-adb root
+	    adb root
 	    echo "Waiting for device"
-	    cm-adb wait-for-device
+	    adb wait-for-device
 	fi
 	echo "Pushing $boot"
-        cm-adb push $boot /sdcard/boot.img
+        adb push $boot /sdcard/boot.img
 	echo "Flashing to $dev"
-        cm-adb shell dd if=/sdcard/boot.img of=$dev
+        adb shell dd if=/sdcard/boot.img of=$dev
 	echo "Rebooting"
-	cm-adb reboot
+	adb reboot
     fi
 }
 
@@ -366,8 +359,8 @@ flash-recovery() {
    else
 	dev="/dev/block/platform/dw_mmc.0/by-name/RECOVERY"
    fi
-   cm-adb push $recovery /sdcard/recovery.img
-   cm-adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
+   adb push $recovery /sdcard/recovery.img
+   adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
 }
 
 alias flash-recovery-dlx='flash-recovery dlx'
@@ -384,23 +377,23 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
-alias audit2allow-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
+alias audit2allow-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
-alias audit2allow-dlx-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
+alias audit2allow-dlx-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
-alias audit2allow-mondrianwifi-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
+alias audit2allow-mondrianwifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
 alias audit2allow-picassolte='audit2allow-cm picassolte'
-alias audit2allow-picassolte-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
+alias audit2allow-picassolte-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
-alias audit2allow-picassowifi-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 alias audit2allow-victara='audit2allow-cm victara'
-alias audit2allow-victara-all='(cm-adb shell dmesg ; cm-adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
+alias audit2allow-victara-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
 
 # -----------------------------
 
 tis-delta() {
     date
-    cm-adb shell su -c "cat $1" | dos2unix > /tmp/tis
+    adb shell su -c "cat $1" | dos2unix > /tmp/tis
     join -j 1 -t ' ' /tmp/tis.last /tmp/tis | \
 	awk '{ if ($3 != $2) printf("%d %d\n", $1, $3 - $2); }'
     cp /tmp/tis /tmp/tis.last
@@ -412,16 +405,16 @@ alias tis-delta-cpu1="tis-delta /sys/devices/system/cpu/cpu1/cpufreq/stats/time_
 alias tis-delta-cpu2="tis-delta /sys/devices/system/cpu/cpu2/cpufreq/stats/time_in_state"
 alias tis-delta-cpu3="tis-delta /sys/devices/system/cpu/cpu3/cpufreq/stats/time_in_state"
 
-alias restart-adb='cm-adb kill-server && sudo `which adb` start-server'
+alias restart-adb='adb kill-server && sudo `which adb` start-server'
 adb-kill() {
  for who in $@; do
-   pids=`cm-adb shell ps | grep "$who" | cut -c 10-15`
+   pids=`adb shell ps | grep "$who" | cut -c 10-15`
    if [ "$pids" = "" ]; then
      echo "Nothing to kill"
    else
      for pid in $pids; do
        echo "Killing pid $pid"
-       cm-adb shell su -c "kill $pid"
+       adb shell su -c "kill $pid"
      done
    fi
  done
@@ -490,11 +483,11 @@ push-local-file() {
 
   file=`basename $full_file`
   echo "Pushing: $dir/$file"
-  cm-adb push "$full_file" /sdcard/$file
-  cm-adb shell su -c "mount -o remount,rw /system"
-  cm-adb shell su -c "mv $dir/$file $dir/$file.old"
-  cm-adb shell su -c "cp '/sdcard/$file' '$dir/'"
-  cm-adb shell su -c "chmod $perms $dir/$file"
-  cm-adb shell su -c "restorecon -v $dir/$file"
-  cm-adb shell su -c "mount -o remount,ro /system"
+  adb push "$full_file" /sdcard/$file
+  adb shell su -c "mount -o remount,rw /system"
+  adb shell su -c "mv $dir/$file $dir/$file.old"
+  adb shell su -c "cp '/sdcard/$file' '$dir/'"
+  adb shell su -c "chmod $perms $dir/$file"
+  adb shell su -c "restorecon -v $dir/$file"
+  adb shell su -c "mount -o remount,ro /system"
 }
