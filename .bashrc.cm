@@ -104,6 +104,7 @@ start-cm() {
     export D=$CM_SRC/device/samsung/$1
     export V=$CM_SRC/vendor/samsung/$1
     export K=$CM_SRC/kernel/samsung/exynos5420
+    export STOCK=/data/exynos/T520UANF4/
     ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
