@@ -1,6 +1,6 @@
 # Aliases / scripts for CM work
 
-export PATH="$PATH:/opt/toolchains/linaro-4.8/bin/:/home/crpalmer/android-sdk-linux/platform-tools"
+export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
 
 alias sync-cm='( cd $CM_SRC && (echo "---- FETCHING -----" && repo sync -n && echo "----- SYNCING SOURCE ------" && repo sync -l )2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` )'
 
@@ -124,6 +124,9 @@ start-cm() {
   esac
 
   CM_DEVICE=$1
+
+  tmp=`echo $PATH | tr ':' '\n' | egrep -v /home/crpalmer/android-sdk-linux | tr '\n' ':'`
+  export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
 }
 
 alias start-dlx='start-cm dlx "$@"'
