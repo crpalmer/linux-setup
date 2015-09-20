@@ -148,7 +148,7 @@ logcat-radio() {
 }
 
 cm-dmesg() {
-   adb wait-for-device && adb shell su -c "cat /proc/kmsg" | tee /tmp/dm.$CM_DEVICE
+   adb wait-for-device && adb shell 'su -c "cat /proc/kmsg"' | tee /tmp/dm.$CM_DEVICE
 }
 
 release-cm() {
@@ -360,7 +360,7 @@ flash-recovery() {
 	dev="/dev/block/platform/dw_mmc.0/by-name/RECOVERY"
    fi
    adb push $recovery /sdcard/recovery.img
-   adb shell su -c "dd if=/sdcard/recovery.img of=$dev"
+   adb shell 'su -c "dd if=/sdcard/recovery.img of=$dev"'
 }
 
 alias flash-recovery-dlx='flash-recovery dlx'
@@ -377,23 +377,26 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
-alias audit2allow-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
+alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'"
+alias audit2allow-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
-alias audit2allow-dlx-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm dlx'
+alias audit2allow-dlx-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm dlx'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
-alias audit2allow-mondrianwifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
+alias audit2allow-mondrianwifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
 alias audit2allow-picassolte='audit2allow-cm picassolte'
-alias audit2allow-picassolte-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
+alias audit2allow-picassolte-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
-alias audit2allow-picassowifi-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 alias audit2allow-victara='audit2allow-cm victara'
-alias audit2allow-victara-all='(adb shell dmesg ; adb shell su -c "cat /data/misc/audit/*" ) | tee /tmp/audit2allow | audit2allow-cm victara'
+alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm victara'
+alias audit2allow-Z00A='audit2allow-cm Z00A'
+alias audit2allow-Z00A-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm Z00A'
 
 # -----------------------------
 
 tis-delta() {
     date
-    adb shell su -c "cat $1" | dos2unix > /tmp/tis
+    adb shell 'su -c "cat '$1'"' | dos2unix > /tmp/tis
     join -j 1 -t ' ' /tmp/tis.last /tmp/tis | \
 	awk '{ if ($3 != $2) printf("%d %d\n", $1, $3 - $2); }'
     cp /tmp/tis /tmp/tis.last
@@ -414,7 +417,7 @@ adb-kill() {
    else
      for pid in $pids; do
        echo "Killing pid $pid"
-       adb shell su -c "kill $pid"
+       adb shell 'su -c "kill '$pid'"'
      done
    fi
  done
@@ -467,27 +470,4 @@ gc-prima-series() {
       gc --abort 2>/dev/null
     fi
   done
-}
-
-push-local-file() {
-  dir="$1"
-  shift
-  full_file="$1"
-  shift
-
-  if [ "$1" = "" ]; then
-     perms=644
-  else
-     perms=$1
-  fi
-
-  file=`basename $full_file`
-  echo "Pushing: $dir/$file"
-  adb push "$full_file" /sdcard/$file
-  adb shell su -c "mount -o remount,rw /system"
-  adb shell su -c "mv $dir/$file $dir/$file.old"
-  adb shell su -c "cp '/sdcard/$file' '$dir/'"
-  adb shell su -c "chmod $perms $dir/$file"
-  adb shell su -c "restorecon -v $dir/$file"
-  adb shell su -c "mount -o remount,ro /system"
 }
