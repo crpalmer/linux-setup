@@ -122,7 +122,8 @@ start-cm() {
     export K=$CM_SRC/kernel/sony/tetra
     ;;
   victara)
-    export ANDROID_SERIAL=TA98903O0Y
+    #export ANDROID_SERIAL=TA98903O0Y
+    export ANDROID_SERIAL=TA9890CWCF
     export D=$CM_SRC/device/motorola/$1
     export DD=$D
     export V=$CM_SRC/vendor/motorola/$1
