@@ -42,7 +42,8 @@ push-changelogs() {
   fi
 
   (start-Z00A ; \
-	repopick 101970 102426 102725 103343 103928 108636 ; \
+	repopick -t zenfone2_bringup ; \
+	repopick -t quick-charge-ui \
   )
   build-cm Z00A
   release-nightly Z00A
