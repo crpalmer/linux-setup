@@ -9,7 +9,7 @@ alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && export C=~/cm-1
 alias start-cm-12.1="export CM_WHICH=cm-12.1 CM_SRC=~/cm-12.1 && export C=~/cm-12.1 && cd ~/cm-12.1"
 alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-13.0 && cd ~/cm-13.0"
 
-start-cm-12.1
+start-cm-13.0
 
 build-cm() {
 (
