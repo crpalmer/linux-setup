@@ -300,7 +300,7 @@ cm-status() {
 	     upstream=`repo info . | sed 's/Manifest merge branch: //p;d'`
 	     revision=`repo info . | sed 's/Current revision: //p;d'`
 	     if echo $revision | egrep -q refs/heads/ ; then
-		:
+		upstream=`echo $upstream | sed 's@refs/heads/@@'`
 	     else
 	        upstream=$revision
 	     fi
