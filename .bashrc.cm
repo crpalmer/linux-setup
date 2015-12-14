@@ -450,7 +450,7 @@ audit2allow-cm()
   audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
 }
 
-alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'"
+alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'; adb shell dmesg; adb logcat -d"
 alias audit2allow-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
 alias audit2allow-dlx-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm dlx'
