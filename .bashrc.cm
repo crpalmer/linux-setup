@@ -2,14 +2,25 @@
 
 export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
 
-alias sync-cm='( cd $CM_SRC && (echo "---- FETCHING -----" && repo sync -n && echo "----- SYNCING SOURCE ------" && repo sync -l )2>&1 | tee /tmp/sync.txt ; cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S` )'
-
 alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && export C=~/cm-11.0 && cd ~/cm-11.0"
 alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && export C=~/cm-12.0 && cd ~/cm-12.0"
 alias start-cm-12.1="export CM_WHICH=cm-12.1 CM_SRC=~/cm-12.1 && export C=~/cm-12.1 && cd ~/cm-12.1"
 alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-13.0 && cd ~/cm-13.0"
 
 start-cm-13.0
+
+sync-cm() {
+(
+  cd $CM_SRC &&
+  (
+    echo "---- FETCHING -----" &&
+    repo sync -n $* &&
+    echo "----- SYNCING SOURCE ------" &&
+    repo sync -l $*
+  )2>&1 | tee /tmp/sync.txt
+  cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S`
+)
+}
 
 build-cm() {
 (
