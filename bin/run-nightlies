@@ -31,11 +31,34 @@ push-changelogs() {
 ##########################################################################
 
 (
+  # wtf jack server, do you really crash if I don't provide this??
+  export USER=crpalmer
+
+  echo "Cleaning /out"
   rm -rf /out/*
+
+  start-cm-13.0
+
+  sync-cm --force-sync
+  if [ "$?" != 0 ]; then
+    echo "Problems syncing"
+    exit 1
+  fi
+
+  (start-Z00A ; \
+	repopick -t zenfone2_m_bringup ; \
+  )
+
+  build-cm Z00A
+  release-nightly Z00A
+  build-cm Z008
+  release-nightly Z008
+
+  # --- CM 12.1 ---
 
   start-cm-12.1
 
-  sync-cm
+  sync-cm --force-sync
   if [ "$?" != 0 ]; then
     echo "Problems syncing"
     exit 1
@@ -53,4 +76,4 @@ push-changelogs() {
   release-nightly mondrianlte
   build-cm picassolte
   release-nightly picassolte
-) > /tmp/nightlies.txt 2>&1
+) 2>&1 | tee /tmp/nightlies.txt
