@@ -398,8 +398,6 @@ flash-boot() {
         adb push $boot /sdcard/boot.img
 	echo "Flashing to $dev"
         adb shell dd if=/sdcard/boot.img of=$dev
-	echo "Rebooting"
-	adb reboot
     fi
 }
 
@@ -446,8 +444,11 @@ alias flash-recovery-picassowifi='flash-recovery picassowifi'
 
 audit2allow-cm()
 {
-  export OUT_DIR_COMMON_BASE=/out/$1 && \
-  audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
+ (
+  export OUT_DIR_COMMON_BASE=/out/$1
+  export ANDROID_BUILD_TOP=$CM_SRC
+  $CM_SRC/external/selinux/prebuilts/bin/audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
+ )
 }
 
 alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'; adb shell dmesg; adb logcat -d"
