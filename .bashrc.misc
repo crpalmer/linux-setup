@@ -1,3 +1,8 @@
-export PATH=~/bin:"$PATH"
 export USE_CCACHE=1
 export EDITOR=vi
+
+#export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64
+#export NDK=/opt/toolchains/android-ndk-r8d
+
+export ANDROID_SDK=/data/android-sdk-linux
+export PATH="~/bin:$ANDROID_SDK:$ANDROID_SDK/tools:$ANDROID_SDK/platform-tools:$PATH"

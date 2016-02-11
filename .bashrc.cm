@@ -9,6 +9,19 @@ alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-1
 
 start-cm-13.0
 
+if [ -x "/usr/bin/make-3.81" ]; then
+   export CM_MAKE=/usr/bin/make-3.81
+else
+   export CM_MAKE=make
+fi
+
+make_j_arg() {
+  ncores=`cat /proc/cpuinfo  | grep 'processor[[:space:]]*:' | wc -l`
+  echo "-j`expr $ncores '*' 2`"
+}
+
+export MAKEFLAGS="`make_j_arg`"
+
 sync-cm() {
 (
   cd $CM_SRC &&
@@ -20,6 +33,16 @@ sync-cm() {
   )2>&1 | tee /tmp/sync.txt
   cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S`
 )
+}
+
+run_make() {
+  if [ -d /cm-tmp/ ]; then
+    export TMPDIR=/cm-tmp
+  fi
+  export MAKE="$CM_MAKE"
+  export CCACHE_BASEDIR="$OUT"
+  time $CM_MAKE `make_j_arg` $*
+  ncores=`cat /proc/cpuinfo  | grep 'processor[[:space:]]*:' | wc -l`
 }
 
 build-cm() {
@@ -34,7 +57,8 @@ build-cm() {
   echo $OUT_DIR_COMMON_BASE && \
   cd $CM_SRC && \
   . ./build/envsetup.sh && \
-  brunch $target && \
+  breakfast $target && \
+  run_make bacon && \
   if [ -e /mnt/roms ]; then
     mkdir -p /mnt/roms/$1 && \
     cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
@@ -58,12 +82,13 @@ start-cm() {
 
   export OUT_DIR_COMMON_BASE=/out/$1/
   cd $CM_SRC
-  if [ `hostname` = compile -o `hostname` = ab1 ]; then
+  if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = compile2 ]; then
      . ./build/envsetup.sh
      breakfast $1
   fi
 
   export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
+  export CTS="$OUT_DIR_COMMON_BASE/$CM_WHICH/host/linux-x86/cts"
   export STOCK=""
 
   export DD=""
@@ -91,6 +116,12 @@ start-cm() {
     export K=$CM_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
+  fugu)
+    export ANDROID_SERIAL=FF18D69C
+    export D=$CM_SRC/device/asus/$1
+    export V=$CM_SRC/vendor/asus/$1
+    export K=$CM_SRC/kernel/asus/fugu
+    ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
     export D=$CM_SRC/device/lge/$1
@@ -104,8 +135,16 @@ start-cm() {
     export K=$CM_SRC/kernel/samsung/mondrianwifi
     export STOCK=/data/mondrianwifi/t320ueu1anai/
     ;;
-  mondrianlte|picassolte)
+  mondrianlte)
     export ANDROID_SERIAL=1019440c06792b29
+    export D=$CM_SRC/device/samsung/$1
+    export DD=$CM_SRC/device/samsung/tabpro-common
+    export V=$CM_SRC/vendor/samsung/$1
+    export VV=$CM_SRC/vendor/samsung/tabpro-common
+    export K=$CM_SRC/kernel/samsung/mondrianwifi
+    ;;
+  picassolte)
+    export ANDROID_SERIAL=1ed18fed
     export D=$CM_SRC/device/samsung/$1
     export DD=$CM_SRC/device/samsung/tabpro-common
     export V=$CM_SRC/vendor/samsung/$1
@@ -177,7 +216,12 @@ logcat-radio() {
 }
 
 cm-dmesg() {
-   adb wait-for-device && adb shell 'su -c "cat /proc/kmsg"' | tee /tmp/dm.$CM_DEVICE
+   adb wait-for-device
+   while true
+   do
+      adb shell 'su -c "dmesg -c"'
+      sleep 1
+   done | tee /tmp/dm.$CM_DEVICE
 }
 
 release-cm() {
@@ -205,7 +249,7 @@ build-cm-boot() {
   cd $CM_SRC && \
   . ./build/envsetup.sh && \
   breakfast $1 && \
-  mka bootimage && \
+  run_make bootimage && \
   boot-odin $1
 ) 2>&1 | tee /tmp/build-$1.txt
 }
@@ -220,7 +264,7 @@ clean-cm() {
   export OUT_DIR_COMMON_BASE=/out/$1 && \
   cd $CM_SRC && \
   . ./build/envsetup.sh && \
-  make clean
+  run_make clean
 )
 }
 
@@ -316,7 +360,7 @@ cm-status() {
 	        upstream=$revision
 	     fi
 
-	     changes=`( git status --porcelain ; log github/$upstream.. ) 2>&1 | wc -l`
+	     changes=`( git status --porcelain ; git log --oneline --no-merges github/$upstream.. ) 2>&1 | wc -l`
 	     if [ "$changes" != 0 ]; then
                  echo
                  echo "******* $f: $upstream: $changes updates *****"
@@ -503,7 +547,7 @@ gc-prima-series() {
 
 function gdbclient_old()
 {
-   local OUT_ROOT=$(get_abs_build_var PRODUCT_OUT)
+   local OUT_ROOT=$OUT
    local OUT_SYMBOLS=$(get_abs_build_var TARGET_OUT_UNSTRIPPED)
    local OUT_SO_SYMBOLS=$(get_abs_build_var TARGET_OUT_SHARED_LIBRARIES_UNSTRIPPED)
    local OUT_VENDOR_SO_SYMBOLS=$(get_abs_build_var TARGET_OUT_VENDOR_SHARED_LIBRARIES_UNSTRIPPED)
@@ -525,7 +569,7 @@ function gdbclient_old()
        if [ "$EXE" ] ; then
            EXE=$1
        else
-           EXE="app_process"
+           EXE="app_process32"
        fi
 
        local PORT="$2"
