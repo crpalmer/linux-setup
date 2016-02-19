@@ -122,6 +122,13 @@ start-cm() {
     export V=$CM_SRC/vendor/asus/$1
     export K=$CM_SRC/kernel/asus/fugu
     ;;
+  kiwi)
+    export ANDROID_SERIAL=GFMDU16109001917
+    export D=$CM_SRC/device/huawei/$1
+    export V=$CM_SRC/vendor/huawei/$1
+    export K=$CM_SRC/kernel/huawei/$1
+    export STOCK=/data/kiwi/firmware/current
+    ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
     export D=$CM_SRC/device/lge/$1
@@ -190,15 +197,13 @@ start-cm() {
   export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
 }
 
-alias start-dlx='start-cm dlx "$@"'
-alias start-Z00A='start-cm Z00A "$@"'
-alias start-hammerhead='start-cm hammerhead "$@"'
-alias start-mondrianwifi='start-cm mondrianwifi "$@"'
-alias start-picassolte='start-cm picassolte "$@"'
-alias start-picassowifi='start-cm picassowifi "$@"'
-alias start-tetra='start-cm tetra "$@"'
-alias start-tetratwrp='start-cm tetratwrp "$@"'
-alias start-victara='start-cm victara "$@"'
+alias start-dlx='start-cm-13.0 && start-cm dlx "$@"'
+alias start-Z00A='start-cm-13.0 && start-cm Z00A "$@"'
+alias start-kiwi='start-cm-12.1 && start-cm kiwi "$@"'
+alias start-mondrianwifi='start-cm-13.0 && start-cm mondrianwifi "$@"'
+alias start-picassolte='start-cm-13.0 && start-cm picassolte "$@"'
+alias start-picassowifi='start-cm-13.0 && start-cm picassowifi "$@"'
+alias start-victara='start-cm-13.0 && start-cm victara "$@"'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
@@ -284,14 +289,16 @@ gdb-cm() {
 
 # -------------------------
 
+alias build-kiwi='build-cm kiwi'
+alias build-kiwi-eng='build-cm kiwi cm_kiwi-eng'
+alias build-kiwi-boot='build-cm-boot-odin kiwi'
+alias kiwi-boot-odin='boot-odin kiwi'
+alias release-kiwi='release-cm kiwi'
+
 alias build-victara='build-cm victara'
 alias build-victara-eng='build-cm victara cm_victara-eng'
 alias build-victara-boot='build-cm-boot victara'
 alias release-victara='release-cm victara'
-
-alias build-tetra='build-cm tetra'
-alias build-tetra-boot='build-cm-boot tetra'
-alias release-tetra='release-cm tetra'
 
 alias build-mondrianwifi='build-cm mondrianwifi'
 alias build-mondrianlte='build-cm mondrianlte'
@@ -324,15 +331,6 @@ alias build-Z00A='build-cm Z00A'
 alias build-Z00A-eng='build-cm Z00A cm_Z00A-eng'
 alias build-Z00A-boot='build-cm-boot Z00A'
 alias release-Z00A='release-cm Z00A'
-
-alias build-hh='build-cm hammerhead'
-alias build-hh-eng='build-cm hammerhead cm_hammerhead-eng'
-alias build-hh-boot='build-cm-boot hammerhead'
-alias release-hh='release-cm hammerhead'
-alias build-hammerhead='build-cm hammerhead'
-alias build-hammerhead-eng='build-cm hammerhead cm_hammerhead-eng'
-alias build-hammerhead-boot='build-cm-boot hammerhead'
-alias release-hammerhead='release-cm hammerhead'
 
 alias gdb-mondrianwifi="gdb-cm mondrianwifi"
 
@@ -406,12 +404,9 @@ flash-boot-fastboot() {
     fastboot flash boot $boot && fastboot reboot
 }
 
-alias flash-boot-dlx='flash-boot dlx'
-alias flash-boot-hammerhead='flash-boot hammerhead'
 alias flash-boot-mondrianwifi='flash-boot mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/boot'
 alias flash-boot-picassolte='flash-boot picassolte /dev/block/platform/msm_sdcc.1/by-name/boot'
 alias flash-boot-picassowifi='flash-boot picassowifi'
-alias flash-boot-victara='flash-boot-fastboot victara'
 
 # ------------------------
 
@@ -434,8 +429,6 @@ flash-recovery() {
    adb shell 'su -c "dd if=/sdcard/recovery.img of=$dev"'
 }
 
-alias flash-recovery-dlx='flash-recovery dlx'
-alias flash-recovery-hammerhead='flash-recovery hammerhead'
 alias flash-recovery-mondrianwifi='flash-recovery mondrianwifi /dev/block/platform/msm_sdcc.1/by-name/recovery "$@"'
 alias flash-recovery-picassolte='flash-recovery picassolte /dev/block/platform/msm_sdcc.1/by-name/recovery'
 alias flash-recovery-picassowifi='flash-recovery picassowifi'
@@ -455,6 +448,8 @@ alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'; adb shell dme
 alias audit2allow-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
 alias audit2allow-dlx='audit2allow-cm dlx'
 alias audit2allow-dlx-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm dlx'
+alias audit2allow-kiwi='audit2allow-cm kiwi'
+alias audit2allow-kiwi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm kiwi'
 alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
 alias audit2allow-mondrianwifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
 alias audit2allow-picassolte='audit2allow-cm picassolte'
