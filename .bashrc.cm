@@ -180,6 +180,7 @@ start-cm() {
     export D=$CM_SRC/device/motorola/$1
     export V=$CM_SRC/vendor/motorola/$1
     export K=$CM_SRC/kernel/motorola/msm8974
+    export STOCK=/data/victara/firmware/6.0
     ;;
   *)
     echo "*** Current using device: $ANDROID_SERIAL"
