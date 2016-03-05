@@ -202,6 +202,7 @@ start-cm() {
 }
 
 alias start-dlx='start-cm-13.0 && start-cm dlx "$@"'
+alias start-Z008='start-cm-13.0 && start-cm Z008 "$@"'
 alias start-Z00A='start-cm-13.0 && start-cm Z00A "$@"'
 alias start-kiwi='start-cm-12.1 && start-cm kiwi "$@"'
 alias start-mondrianwifi='start-cm-13.0 && start-cm mondrianwifi "$@"'
@@ -330,6 +331,11 @@ alias build-dlx='build-cm dlx'
 alias build-dlx-eng='build-cm dlx cm_dlx-eng'
 alias build-dlx-boot='build-cm-boot dlx'
 alias release-dlx='release-cm dlx'
+
+alias build-Z008='build-cm Z008'
+alias build-Z008-eng='build-cm Z008 cm_Z008-eng'
+alias build-Z008-boot='build-cm-boot Z008'
+alias release-Z008='release-cm Z008'
 
 alias build-Z00A='build-cm Z00A'
 alias build-Z00A-eng='build-cm Z00A cm_Z00A-eng'
@@ -462,6 +468,8 @@ alias audit2allow-picassowifi='audit2allow-cm picassowifi'
 alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
 alias audit2allow-victara='audit2allow-cm victara'
 alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm victara'
+alias audit2allow-Z008='audit2allow-cm Z008'
+alias audit2allow-Z008-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm Z008'
 alias audit2allow-Z00A='audit2allow-cm Z00A'
 alias audit2allow-Z00A-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm Z00A'
 
