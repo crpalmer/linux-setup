@@ -102,11 +102,14 @@ start-cm() {
     export K=$CM_SRC/kernel/htc/m7
     ;;
   Z008)
-    export ANDROID_SERIAL=F5AZFG10C192
+    #export ANDROID_SERIAL=F9AZFGTW0010
     export D=$CM_SRC/device/asus/$1
+    export DD=$CM_SRC/device/asus/mofd-common
+    export V=$CM_SRC/vendor/asus/$1
+    export VV=$CM_SRC/vendor/asus/mofd-common
     export K=$CM_SRC/kernel/asus/moorefield
-    export STOCK=/data/zenfone2/firmware/current-Z008
-  ;;
+    export STOCK=/data/zenfone2/firmware/current-z008
+    ;;
   Z00A)
     export ANDROID_SERIAL=F5AZFG10C192
     export D=$CM_SRC/device/asus/$1
