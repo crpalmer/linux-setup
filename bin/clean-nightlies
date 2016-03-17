@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 # Number of files to keep (+1)
-N=11
+N=5
 
 for dir in /nightlies/*
 do
