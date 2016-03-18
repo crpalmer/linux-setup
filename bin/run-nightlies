@@ -37,25 +37,6 @@ push-changelogs() {
   echo "Cleaning /out"
   rm -rf /out/*
 
-  start-cm-13.0
-
-  sync-cm --force-sync
-  if [ "$?" != 0 ]; then
-    echo "Problems syncing"
-    exit 1
-  fi
-
-  (start-Z00A ; \
-	repopick -t zenfone2_m_bringup ; \
-  )
-
-  build-cm Z00A
-  release-nightly Z00A
-  build-cm Z008
-  release-nightly Z008
-
-  # --- CM 12.1 ---
-
   start-cm-12.1
 
   sync-cm --force-sync
@@ -64,16 +45,20 @@ push-changelogs() {
     exit 1
   fi
 
-  (start-Z00A ; \
-	repopick -t zenfone2_bringup ; \
-	repopick -t quick-charge-ui \
-  )
-  build-cm Z00A
-  release-nightly Z00A
-  build-cm Z008
-  release-nightly Z008
+  build-cm kiwi
+  release-nightly kiwi
+
+  start-cm-13.0
+
+  sync-cm --force-sync
+  if [ "$?" != 0 ]; then
+    echo "Problems syncing"
+    exit 1
+  fi
+
   build-cm mondrianlte
   release-nightly mondrianlte
   build-cm picassolte
   release-nightly picassolte
+
 ) 2>&1 | tee /tmp/nightlies.txt
