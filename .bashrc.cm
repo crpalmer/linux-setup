@@ -384,7 +384,16 @@ cm-status() {
                  echo
                  echo "******* $f: $upstream: $changes updates *****"
                  echo
-                 log github/$upstream..
+                 git log --oneline --no-merges github/$upstream..
+                 git status --porcelain
+	     fi
+
+	     changes=`( git status --porcelain ; git log --oneline --no-merges ..github/$upstream ) 2>&1 | wc -l`
+	     if [ "$changes" != 0 ]; then
+                 echo
+                 echo "******* $f: $upstream: missing $changes updates *****"
+                 echo
+                 git log --oneline --no-merges ..github/$upstream
                  git status --porcelain
 	     fi
         ) 2>&1
