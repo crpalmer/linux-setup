@@ -168,6 +168,13 @@ start-cm() {
     export K=$CM_SRC/kernel/samsung/exynos5420
     export STOCK=/data/exynos/T520UANF4/
     ;;
+  pme)
+    export ANDROID_SERIAL=HT66RBN00029
+    export D=$CM_SRC/device/htc/$1
+    export V=$CM_SRC/vendor/htc/$1
+    export K=$CM_SRC/kernel/htc/msm8996
+    export STOCK=/data/exynos/firmware/current/
+    ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
     export D=$CM_SRC/device/sony/$1
@@ -208,6 +215,7 @@ alias start-kiwi='start-cm-13.0 && start-cm kiwi "$@"'
 alias start-mondrianwifi='start-cm-13.0 && start-cm mondrianwifi "$@"'
 alias start-picassolte='start-cm-13.0 && start-cm picassolte "$@"'
 alias start-picassowifi='start-cm-13.0 && start-cm picassowifi "$@"'
+alias start-pme='start-cm-13.0 && start-cm pme "$@"'
 alias start-victara='start-cm-13.0 && start-cm victara "$@"'
 
 adb-forward() {
@@ -326,6 +334,9 @@ alias build-picassowifi-eng='build-cm picassowifi cm_picassowifi-eng'
 alias build-picassowifi-boot='build-cm-boot-odin picassowifi'
 alias picassowifi-boot-odin='boot-odin picassowifi'
 alias release-picassowifi='release-cm picassowifi'
+
+alias build-pme='build-cm pme'
+alias release-pme='release-cm pme'
 
 alias build-dlx='build-cm dlx'
 alias build-dlx-eng='build-cm dlx cm_dlx-eng'
@@ -466,6 +477,8 @@ alias audit2allow-picassolte='audit2allow-cm picassolte'
 alias audit2allow-picassolte-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
 alias audit2allow-picassowifi='audit2allow-cm picassowifi'
 alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
+alias audit2allow-pme='audit2allow-cm pme'
+alias audit2allow-pme-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm pme'
 alias audit2allow-victara='audit2allow-cm victara'
 alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm victara'
 alias audit2allow-Z008='audit2allow-cm Z008'
