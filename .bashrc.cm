@@ -555,11 +555,11 @@ tag-finder() {
     echo Lines Changed : $best
 }
 
-alias gc-prima='gc --strategy=subtree --strategy-option subtree=drivers/staging/prima'
+alias gc-prima='git cherry-pick --strategy=subtree --strategy-option subtree=drivers/staging/prima'
 alias merge-prima='git merge --strategy=subtree --strategy-option subtree=drivers/staging/prima'
 
 gc-prima-series() {
-  logr "$@" | while read commit
+  git log --reverse --oneline --no-merges "$@" | while read commit
   do
     sha1=`echo $commit | cut -d ' ' -f 1`
     if ! gc-prima --allow-empty $sha1
@@ -570,7 +570,7 @@ gc-prima-series() {
       echo -n "Conflicts, resolve and hit enter: "
       read < /dev/tty
       git commit --allow-empty --reuse-message=$sha1
-      gc --abort 2>/dev/null
+      git cherry-pick --abort 2>/dev/null
     fi
   done
 }
