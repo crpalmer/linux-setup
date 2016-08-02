@@ -173,7 +173,7 @@ start-cm() {
     export D=$CM_SRC/device/htc/$1
     export V=$CM_SRC/vendor/htc/$1
     export K=$CM_SRC/kernel/htc/msm8996
-    export STOCK=/data/exynos/firmware/current/
+    export STOCK=/data/$1/firmware/current/
     ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
