@@ -2,10 +2,8 @@
 
 export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
 
-alias start-cm-11.0="export CM_WHICH=cm-11.0 CM_SRC=~/cm-11.0 && export C=~/cm-11.0 && cd ~/cm-11.0"
-alias start-cm-12.0="export CM_WHICH=cm-12.0 CM_SRC=~/cm-12.0 && export C=~/cm-12.0 && cd ~/cm-12.0"
-alias start-cm-12.1="export CM_WHICH=cm-12.1 CM_SRC=~/cm-12.1 && export C=~/cm-12.1 && cd ~/cm-12.1"
 alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-13.0 && cd ~/cm-13.0"
+alias start-cm-14.0="export CM_WHICH=cm-14.0 CM_SRC=~/cm-14.0 && export C=~/cm-14.0 && cd ~/cm-14.0"
 
 start-cm-13.0
 
@@ -212,7 +210,9 @@ alias start-dlx='start-cm-13.0 && start-cm dlx "$@"'
 alias start-Z008='start-cm-13.0 && start-cm Z008 "$@"'
 alias start-Z00A='start-cm-13.0 && start-cm Z00A "$@"'
 alias start-kiwi='start-cm-13.0 && start-cm kiwi "$@"'
+alias start-kiwi14='start-cm-14.0 && start-cm kiwi "$@"'
 alias start-mondrianwifi='start-cm-13.0 && start-cm mondrianwifi "$@"'
+alias start-mondrianwifi14='start-cm-14.0 && start-cm mondrianwifi "$@"'
 alias start-picassolte='start-cm-13.0 && start-cm picassolte "$@"'
 alias start-picassowifi='start-cm-13.0 && start-cm picassowifi "$@"'
 alias start-pme='start-cm-13.0 && start-cm pme "$@"'
