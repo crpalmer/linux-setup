@@ -209,6 +209,7 @@ start-cm() {
 alias start-dlx='start-cm-13.0 && start-cm dlx "$@"'
 alias start-Z008='start-cm-13.0 && start-cm Z008 "$@"'
 alias start-Z00A='start-cm-13.0 && start-cm Z00A "$@"'
+alias start-Z00A14='start-cm-14.1 && start-cm Z00A "$@"'
 alias start-kiwi='start-cm-13.0 && start-cm kiwi "$@"'
 alias start-kiwi14='start-cm-14.1 && start-cm kiwi "$@"'
 alias start-mondrianwifi='start-cm-13.0 && start-cm mondrianwifi "$@"'
@@ -217,6 +218,7 @@ alias start-picassolte='start-cm-13.0 && start-cm picassolte "$@"'
 alias start-picassowifi='start-cm-13.0 && start-cm picassowifi "$@"'
 alias start-pme='start-cm-13.0 && start-cm pme "$@"'
 alias start-victara='start-cm-13.0 && start-cm victara "$@"'
+alias start-victara14='start-cm-14.1 && start-cm victara "$@"'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
