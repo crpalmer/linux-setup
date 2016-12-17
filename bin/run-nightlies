@@ -9,8 +9,14 @@ do_nightlies() {
 
   for nightly in $*
   do
-    build-cm $nightly
-    release-nightly $nightly
+    (
+      start-cm $nightly
+      build-cm $nightly
+      release-nightly $nightly
+
+      echo "Stopping jack"
+      jack-admin stop-server
+    )
   done
 
   return 0
