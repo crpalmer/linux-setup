@@ -1,5 +1,21 @@
 #!/bin/bash -i
 
+do_nightlies() {
+  sync-cm --force-sync
+  if [ "$?" != 0 ]; then
+    echo "Problems syncing"
+    exit 1
+  fi
+
+  for nightly in $*
+  do
+    build-cm $nightly
+    release-nightly $nightly
+  done
+
+  return 0
+}
+
 ##########################################################################
 
 (
@@ -9,35 +25,10 @@
   echo "Cleaning /out"
   rm -rf /out/*
 
-# ---------------
-
   start-cm-14.1
-  sync-cm --force-sync
-  if [ "$?" != 0 ]; then
-    echo "Problems syncing"
-    exit 1
-  fi
-
-  build-cm pme
-  release-nightly pme
-
-# ---------------
+  do_nightlies pme kiwi
 
   start-cm-13.0
-
-  sync-cm --force-sync
-  if [ "$?" != 0 ]; then
-    echo "Problems syncing"
-    exit 1
-  fi
-
-  build-cm pme
-  release-nightly pme
-  build-cm kiwi
-  release-nightly kiwi
-  build-cm mondrianlte
-  release-nightly mondrianlte
-  build-cm picassolte
-  release-nightly picassolte
+  do_nightlies pme kiwi mondrianlte picassolte
 
 ) 2>&1 | tee /tmp/nightlies.txt
