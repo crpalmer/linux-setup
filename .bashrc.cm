@@ -80,7 +80,7 @@ start-cm() {
 
   export OUT_DIR_COMMON_BASE=/out/$1/
   cd $CM_SRC
-  if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = compile2 ]; then
+  if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
      . ./build/envsetup.sh
      breakfast $1
   fi
