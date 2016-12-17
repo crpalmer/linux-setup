@@ -37,16 +37,30 @@ push-changelogs() {
   echo "Cleaning /out"
   rm -rf /out/*
 
-  start-cm-12.1
+#  start-cm-12.1
+#
+#  sync-cm --force-sync
+#  if [ "$?" != 0 ]; then
+#    echo "Problems syncing"
+#    exit 1
+#  fi
+#
+#  build-cm kiwi
+#  release-nightly kiwi
 
+# ---------------
+
+  start-cm-14.1
   sync-cm --force-sync
   if [ "$?" != 0 ]; then
     echo "Problems syncing"
     exit 1
   fi
 
-  build-cm kiwi
-  release-nightly kiwi
+  build-cm pme
+  release-nightly pme
+
+# ---------------
 
   start-cm-13.0
 
@@ -56,6 +70,10 @@ push-changelogs() {
     exit 1
   fi
 
+  build-cm pme
+  release-nightly pme
+  build-cm kiwi
+  release-nightly kiwi
   build-cm mondrianlte
   release-nightly mondrianlte
   build-cm picassolte
