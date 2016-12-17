@@ -5,7 +5,7 @@ export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchai
 alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-13.0 && cd ~/cm-13.0"
 alias start-cm-14.1="export CM_WHICH=cm-14.1 CM_SRC=~/cm-14.1 && export C=~/cm-14.1 && cd ~/cm-14.1"
 
-start-cm-13.0
+start-cm-14.1
 
 if [ -x "/usr/bin/make-3.81" ]; then
    export CM_MAKE=/usr/bin/make-3.81
