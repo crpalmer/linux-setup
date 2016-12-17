@@ -1,33 +1,5 @@
 #!/bin/bash -i
 
-UNOFFICIAL="
-	device/samsung/mondrianlte
-	device/samsung/picassolte
-	device/samsung/tabpro-common
-	vendor/samsung/tabpro-common
-"
-
-changelog-name() {
-   echo /tmp/changelog-`echo $1 | sed 's@/@_@g'`.txt
-}
-
-generate-changelogs() {
-echo $UNOFFICIAL
-  for dir in $UNOFFICIAL
-  do
-echo $dir
-changelog-name $dir
-    generate-changelog $dir > `changelog-name $dir`
-  done
-}
-
-push-changelogs() {
-  for dir in $UNOFFICIAL
-  do
-    scp `changelog-name $dir` download.crpalmer.org:/nightlies/
-  done
-}
-
 ##########################################################################
 
 (
@@ -36,17 +8,6 @@ push-changelogs() {
 
   echo "Cleaning /out"
   rm -rf /out/*
-
-#  start-cm-12.1
-#
-#  sync-cm --force-sync
-#  if [ "$?" != 0 ]; then
-#    echo "Problems syncing"
-#    exit 1
-#  fi
-#
-#  build-cm kiwi
-#  release-nightly kiwi
 
 # ---------------
 
