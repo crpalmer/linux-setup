@@ -1,16 +1,23 @@
-# Aliases / scripts for CM work
+# Aliases / scripts for LineageOS work
 
 export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
 
-alias start-cm-13.0="export CM_WHICH=cm-13.0 CM_SRC=~/cm-13.0 && export C=~/cm-13.0 && cd ~/cm-13.0"
-alias start-cm-14.1="export CM_WHICH=cm-14.1 CM_SRC=~/cm-14.1 && export C=~/cm-14.1 && cd ~/cm-14.1"
+alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
+alias start-lineage-14.1="export LINEAGE_WHICH=lineage-14.1 LINEAGE_SRC=~/lineage-14.1 && export C=~/lineage-14.1 && cd ~/lineage-14.1"
 
-start-cm-14.1
+start-lineage-14.1
+
+# Muscle memory requires these
+alias start-cm-13.0=start-lineage-13.0
+alias start-cm-14.1=start-lineage-14.1
+alias build-cm=build-lineage
+alias cm-status=lineage-status
+alias sync-cm=sync-lineage
 
 if [ -x "/usr/bin/make-3.81" ]; then
-   export CM_MAKE=/usr/bin/make-3.81
+   export LINEAGE_MAKE=/usr/bin/make-3.81
 else
-   export CM_MAKE=make
+   export LINEAGE_MAKE=make
 fi
 
 make_j_arg() {
@@ -20,30 +27,30 @@ make_j_arg() {
 
 export MAKEFLAGS="`make_j_arg`"
 
-sync-cm() {
+sync-lineage() {
 (
-  cd $CM_SRC &&
+  cd $LINEAGE_SRC &&
   (
     echo "---- FETCHING -----" &&
     repo sync -n $* &&
     echo "----- SYNCING SOURCE ------" &&
     repo sync -l $*
   )2>&1 | tee /tmp/sync.txt
-  cp /tmp/sync.txt ~/syncs-$CM_WHICH/`date +%Y%m%dT%H%M%S`
+  cp /tmp/sync.txt ~/syncs-$LINEAGE_WHICH/`date +%Y%m%dT%H%M%S`
 )
 }
 
 run_make() {
-  if [ -d /cm-tmp/ ]; then
-    export TMPDIR=/cm-tmp
+  if [ -d /lineage-tmp/ ]; then
+    export TMPDIR=/lineage-tmp
   fi
-  export MAKE="$CM_MAKE"
+  export MAKE="$LINEAGE_MAKE"
   export CCACHE_BASEDIR="$OUT"
-  time $CM_MAKE `make_j_arg` $*
+  time $LINEAGE_MAKE `make_j_arg` $*
   ncores=`cat /proc/cpuinfo  | grep 'processor[[:space:]]*:' | wc -l`
 }
 
-build-cm() {
+build-lineage() {
 (
   if [ "$2" = "" ]; then
      target="$1"
@@ -53,22 +60,22 @@ build-cm() {
 
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
   echo $OUT_DIR_COMMON_BASE && \
-  cd $CM_SRC && \
+  cd $LINEAGE_SRC && \
   . ./build/envsetup.sh && \
   breakfast $target && \
   run_make bacon && \
   if [ -e /mnt/roms ]; then
     mkdir -p /mnt/roms/$1 && \
-    cp $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
+    cp $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
   fi
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
-start-cm() {
+start-lineage() {
   if [ "$2" == "12.0" ]; then
-     start-cm-12.0
+     start-lineage-12.0
   elif [ "$2" = "12.1" ]; then
-     start-cm-12.1
+     start-lineage-12.1
   elif [ "$2" != "" ]; then
      echo >&2 'Invalid argument [$2]'
   fi
@@ -79,14 +86,14 @@ start-cm() {
   export PS1="[$1] $BASE_PS1"
 
   export OUT_DIR_COMMON_BASE=/out/$1/
-  cd $CM_SRC
+  cd $LINEAGE_SRC
   if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
      . ./build/envsetup.sh
      breakfast $1
   fi
 
-  export OUT="$OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1"
-  export CTS="$OUT_DIR_COMMON_BASE/$CM_WHICH/host/linux-x86/cts"
+  export OUT="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1"
+  export CTS="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/host/linux-x86/cts"
   export STOCK=""
 
   export DD=""
@@ -95,96 +102,96 @@ start-cm() {
   case "$1" in
   dlx)
     export ANDROID_SERIAL=FA2BLS506023
-    export D=$CM_SRC/device/htc/$1
-    export V=$CM_SRC/vendor/htc/$1
-    export K=$CM_SRC/kernel/htc/m7
+    export D=$LINEAGE_SRC/device/htc/$1
+    export V=$LINEAGE_SRC/vendor/htc/$1
+    export K=$LINEAGE_SRC/kernel/htc/m7
     ;;
   Z008)
     export ANDROID_SERIAL=F9AZFGTW0010
-    export D=$CM_SRC/device/asus/$1
-    export DD=$CM_SRC/device/asus/mofd-common
-    export V=$CM_SRC/vendor/asus/$1
-    export VV=$CM_SRC/vendor/asus/mofd-common
-    export K=$CM_SRC/kernel/asus/moorefield
+    export D=$LINEAGE_SRC/device/asus/$1
+    export DD=$LINEAGE_SRC/device/asus/mofd-common
+    export V=$LINEAGE_SRC/vendor/asus/$1
+    export VV=$LINEAGE_SRC/vendor/asus/mofd-common
+    export K=$LINEAGE_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current-z008
     ;;
   Z00A)
     export ANDROID_SERIAL=F5AZFG10C192
-    export D=$CM_SRC/device/asus/$1
-    export DD=$CM_SRC/device/asus/mofd-common
-    export V=$CM_SRC/vendor/asus/$1
-    export VV=$CM_SRC/vendor/asus/mofd-common
-    export K=$CM_SRC/kernel/asus/moorefield
+    export D=$LINEAGE_SRC/device/asus/$1
+    export DD=$LINEAGE_SRC/device/asus/mofd-common
+    export V=$LINEAGE_SRC/vendor/asus/$1
+    export VV=$LINEAGE_SRC/vendor/asus/mofd-common
+    export K=$LINEAGE_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
   fugu)
     export ANDROID_SERIAL=FF18D69C
-    export D=$CM_SRC/device/asus/$1
-    export V=$CM_SRC/vendor/asus/$1
-    export K=$CM_SRC/kernel/asus/fugu
+    export D=$LINEAGE_SRC/device/asus/$1
+    export V=$LINEAGE_SRC/vendor/asus/$1
+    export K=$LINEAGE_SRC/kernel/asus/fugu
     ;;
   kiwi)
     export ANDROID_SERIAL=GFMDU16109001917
-    export D=$CM_SRC/device/huawei/$1
-    export V=$CM_SRC/vendor/huawei/$1
-    export K=$CM_SRC/kernel/huawei/$1
+    export D=$LINEAGE_SRC/device/huawei/$1
+    export V=$LINEAGE_SRC/vendor/huawei/$1
+    export K=$LINEAGE_SRC/kernel/huawei/$1
     export STOCK=/data/kiwi/firmware/current
     ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
-    export D=$CM_SRC/device/lge/$1
-    export V=$CM_SRC/vendor/lge/$1
-    export K=$CM_SRC/kernel/lge/hammerhead
+    export D=$LINEAGE_SRC/device/lge/$1
+    export V=$LINEAGE_SRC/vendor/lge/$1
+    export K=$LINEAGE_SRC/kernel/lge/hammerhead
     ;;
   mondrianwifi)
     export ANDROID_SERIAL=1019440c06792b29
-    export D=$CM_SRC/device/samsung/$1
-    export V=$CM_SRC/vendor/samsung/$1
-    export K=$CM_SRC/kernel/samsung/mondrianwifi
+    export D=$LINEAGE_SRC/device/samsung/$1
+    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     export STOCK=/data/mondrianwifi/t320ueu1anai/
     ;;
   mondrianlte)
     export ANDROID_SERIAL=1019440c06792b29
-    export D=$CM_SRC/device/samsung/$1
-    export DD=$CM_SRC/device/samsung/tabpro-common
-    export V=$CM_SRC/vendor/samsung/$1
-    export VV=$CM_SRC/vendor/samsung/tabpro-common
-    export K=$CM_SRC/kernel/samsung/mondrianwifi
+    export D=$LINEAGE_SRC/device/samsung/$1
+    export DD=$LINEAGE_SRC/device/samsung/tabpro-common
+    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export VV=$LINEAGE_SRC/vendor/samsung/tabpro-common
+    export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     ;;
   picassolte)
     export ANDROID_SERIAL=1ed18fed
-    export D=$CM_SRC/device/samsung/$1
-    export DD=$CM_SRC/device/samsung/tabpro-common
-    export V=$CM_SRC/vendor/samsung/$1
-    export VV=$CM_SRC/vendor/samsung/tabpro-common
-    export K=$CM_SRC/kernel/samsung/mondrianwifi
+    export D=$LINEAGE_SRC/device/samsung/$1
+    export DD=$LINEAGE_SRC/device/samsung/tabpro-common
+    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export VV=$LINEAGE_SRC/vendor/samsung/tabpro-common
+    export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     ;;
   picassowifi)
     export ANDROID_SERIAL=32044d1a104eb0db
-    export D=$CM_SRC/device/samsung/$1
-    export V=$CM_SRC/vendor/samsung/$1
-    export K=$CM_SRC/kernel/samsung/exynos5420
+    export D=$LINEAGE_SRC/device/samsung/$1
+    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export K=$LINEAGE_SRC/kernel/samsung/exynos5420
     export STOCK=/data/exynos/T520UANF4/
     ;;
   pme)
     export ANDROID_SERIAL=HT66RBN00029
-    export D=$CM_SRC/device/htc/$1
-    export V=$CM_SRC/vendor/htc/$1
-    export K=$CM_SRC/kernel/htc/msm8996
+    export D=$LINEAGE_SRC/device/htc/$1
+    export V=$LINEAGE_SRC/vendor/htc/$1
+    export K=$LINEAGE_SRC/kernel/htc/msm8996
     export STOCK=/data/$1/firmware/current/
     ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
-    export D=$CM_SRC/device/sony/$1
-    export V=$CM_SRC/vendor/sony/$1
-    export K=$CM_SRC/kernel/sony/tetra
+    export D=$LINEAGE_SRC/device/sony/$1
+    export V=$LINEAGE_SRC/vendor/sony/$1
+    export K=$LINEAGE_SRC/kernel/sony/tetra
     ;;
   victara)
     #export ANDROID_SERIAL=TA98903O0Y
     export ANDROID_SERIAL=TA9890CWCF
-    export D=$CM_SRC/device/motorola/$1
-    export V=$CM_SRC/vendor/motorola/$1
-    export K=$CM_SRC/kernel/motorola/msm8974
+    export D=$LINEAGE_SRC/device/motorola/$1
+    export V=$LINEAGE_SRC/vendor/motorola/$1
+    export K=$LINEAGE_SRC/kernel/motorola/msm8974
     export STOCK=/data/victara/firmware/6.0
     ;;
   *)
@@ -200,26 +207,26 @@ start-cm() {
     export VV="$V"
   fi
 
-  CM_DEVICE=$1
+  LINEAGE_DEVICE=$1
 
   tmp=`echo $PATH | tr ':' '\n' | egrep -v /home/crpalmer/android-sdk-linux | tr '\n' ':'`
   export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
 }
 
-alias start-dlx='start-cm-13.0 && start-cm dlx "$@"'
-alias start-Z008='start-cm-13.0 && start-cm Z008 "$@"'
-alias start-Z00A13='start-cm-13.0 && start-cm Z00A "$@"'
-alias start-Z00A='start-cm-14.1 && start-cm Z00A "$@"'
-alias start-kiwi13='start-cm-13.0 && start-cm kiwi "$@"'
-alias start-kiwi='start-cm-14.1 && start-cm kiwi "$@"'
-alias start-mondrianwifi13='start-cm-13.0 && start-cm mondrianwifi "$@"'
-alias start-mondrianwifi='start-cm-14.1 && start-cm mondrianwifi "$@"'
-alias start-picassolte='start-cm-13.0 && start-cm picassolte "$@"'
-alias start-picassowifi='start-cm-13.0 && start-cm picassowifi "$@"'
-alias start-pme13='start-cm-13.0 && start-cm pme "$@"'
-alias start-pme='start-cm-14.1 && start-cm pme "$@"'
-alias start-victara13='start-cm-13.0 && start-cm victara "$@"'
-alias start-victara='start-cm-14.1 && start-cm victara "$@"'
+alias start-dlx='start-lineage-13.0 && start-lineage dlx "$@"'
+alias start-Z008='start-lineage-13.0 && start-lineage Z008 "$@"'
+alias start-Z00A13='start-lineage-13.0 && start-lineage Z00A "$@"'
+alias start-Z00A='start-lineage-14.1 && start-lineage Z00A "$@"'
+alias start-kiwi13='start-lineage-13.0 && start-lineage kiwi "$@"'
+alias start-kiwi='start-lineage-14.1 && start-lineage kiwi "$@"'
+alias start-mondrianwifi13='start-lineage-13.0 && start-lineage mondrianwifi "$@"'
+alias start-mondrianwifi='start-lineage-14.1 && start-lineage mondrianwifi "$@"'
+alias start-picassolte='start-lineage-13.0 && start-lineage picassolte "$@"'
+alias start-picassowifi='start-lineage-13.0 && start-lineage picassowifi "$@"'
+alias start-pme13='start-lineage-13.0 && start-lineage pme "$@"'
+alias start-pme='start-lineage-14.1 && start-lineage pme "$@"'
+alias start-victara13='start-lineage-13.0 && start-lineage victara "$@"'
+alias start-victara='start-lineage-14.1 && start-lineage victara "$@"'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
@@ -229,45 +236,45 @@ adb-forward() {
 }
 
 logcat() {
-   adb logcat -v time "$@" | tee /tmp/lc.$CM_DEVICE
+   adb logcat -v time "$@" | tee /tmp/lc.$LINEAGE_DEVICE
 }
 
 logcat-radio() {
-   adb logcat -b radio -v time "$@" | tee /tmp/lc.$CM_DEVICE.radio
+   adb logcat -b radio -v time "$@" | tee /tmp/lc.$LINEAGE_DEVICE.radio
 }
 
-cm-dmesg() {
+lineage-dmesg() {
    adb wait-for-device
    while true
    do
       adb shell 'su -c "dmesg -c"'
       sleep 1
-   done | tee /tmp/dm.$CM_DEVICE
+   done | tee /tmp/dm.$LINEAGE_DEVICE
 }
 
-release-cm() {
+release-lineage() {
   export OUT_DIR_COMMON_BASE=/out/$1/ && \
-  scp `ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
+  scp `ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
 }
 
 release-nightly() {
   export OUT_DIR_COMMON_BASE=/out/$1/
-  D=/nightlies/$1-$CM_WHICH
+  D=/nightlies/$1-$LINEAGE_WHICH
   if [ "`ssh download.crpalmer.org ls -d $D`" = "" ]; then
     D=/nightlies/$1
     ssh download.crpalmer.org mkdir -p $D
   fi
-  F=`ls -t $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
+  F=`ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
   echo "Releasing $F"
   echo "To        $D"
   scp $F download.crpalmer.org:$D/
 }
 
-build-cm-boot() {
+build-lineage-boot() {
 (
   export OUT_DIR_COMMON_BASE=/out/$1 && \
   echo $OUT_DIR_COMMON_BASE && \
-  cd $CM_SRC && \
+  cd $LINEAGE_SRC && \
   . ./build/envsetup.sh && \
   breakfast $1 && \
   run_make bootimage && \
@@ -275,15 +282,15 @@ build-cm-boot() {
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
-build-cm-boot-odin() {
-  build-cm-boot $1 && \
+build-lineage-boot-odin() {
+  build-lineage-boot $1 && \
   boot-odin $1
 }
 
-clean-cm() {
+clean-lineage() {
 (
   export OUT_DIR_COMMON_BASE=/out/$1 && \
-  cd $CM_SRC && \
+  cd $LINEAGE_SRC && \
   . ./build/envsetup.sh && \
   run_make clean
 )
@@ -292,11 +299,11 @@ clean-cm() {
 boot-odin() {
 (
   cd /mnt/roms/odin && \
-  create-odin cm-boot-$1 /out/$1/$CM_WHICH/target/product/$1/boot.img
+  create-odin lineage-boot-$1 /out/$1/$LINEAGE_WHICH/target/product/$1/boot.img
 )
 }
 
-gdb-cm() {
+gdb-lineage() {
   export OUT_DIR_COMMON_BASE=/out/$1 && \
   . ./build/envsetup.sh && \
   breakfast $1 && \
@@ -305,70 +312,70 @@ gdb-cm() {
 
 # -------------------------
 
-alias build-kiwi='build-cm kiwi'
-alias build-kiwi-eng='build-cm kiwi cm_kiwi-eng'
-alias build-kiwi-boot='build-cm-boot-odin kiwi'
+alias build-kiwi='build-lineage kiwi'
+alias build-kiwi-eng='build-lineage kiwi lineage-eng'
+alias build-kiwi-boot='build-lineage-boot-odin kiwi'
 alias kiwi-boot-odin='boot-odin kiwi'
-alias release-kiwi='release-cm kiwi'
+alias release-kiwi='release-lineage kiwi'
 
-alias build-victara='build-cm victara'
-alias build-victara-eng='build-cm victara cm_victara-eng'
-alias build-victara-boot='build-cm-boot victara'
-alias release-victara='release-cm victara'
+alias build-victara='build-lineage victara'
+alias build-victara-eng='build-lineage victara lineage-eng'
+alias build-victara-boot='build-lineage-boot victara'
+alias release-victara='release-lineage victara'
 
-alias build-mondrianwifi='build-cm mondrianwifi'
-alias build-mondrianlte='build-cm mondrianlte'
-alias build-mondrianwifi-eng='build-cm mondrianwifi cm_mondrianwifi-eng'
-alias build-mondrianlte-eng='build-cm mondrianlte cm_mondrianlte-eng'
-alias build-mondrianwifi-boot='build-cm-boot-odin mondrianwifi'
-alias build-mondrianlte-boot='build-cm-boot-odin mondrianlte'
+alias build-mondrianwifi='build-lineage mondrianwifi'
+alias build-mondrianlte='build-lineage mondrianlte'
+alias build-mondrianwifi-eng='build-lineage mondrianwifi lineage-eng'
+alias build-mondrianlte-eng='build-lineage mondrianlte lineage-eng'
+alias build-mondrianwifi-boot='build-lineage-boot-odin mondrianwifi'
+alias build-mondrianlte-boot='build-lineage-boot-odin mondrianlte'
 alias mondrianwifi-boot-odin='boot-odin mondrianwifi'
 alias mondrianlte-boot-odin='boot-odin mondrianlte'
-alias release-mondrianlte='release-cm mondrianlte'
+alias release-mondrianlte='release-lineage mondrianlte'
 
-alias build-picassolte='build-cm picassolte'
-alias build-picassolte-eng='build-cm picassolte cm_picassolte-eng'
-alias build-picassolte-boot='build-cm-boot-odin picassolte'
+alias build-picassolte='build-lineage picassolte'
+alias build-picassolte-eng='build-lineage picassolte lineage-eng'
+alias build-picassolte-boot='build-lineage-boot-odin picassolte'
 alias picassolte-boot-odin='boot-odin picassolte'
-alias release-picassolte='release-cm picassolte'
+alias release-picassolte='release-lineage picassolte'
 
-alias build-picassowifi='build-cm picassowifi'
-alias build-picassowifi-eng='build-cm picassowifi cm_picassowifi-eng'
-alias build-picassowifi-boot='build-cm-boot-odin picassowifi'
+alias build-picassowifi='build-lineage picassowifi'
+alias build-picassowifi-eng='build-lineage picassowifi lineage-eng'
+alias build-picassowifi-boot='build-lineage-boot-odin picassowifi'
 alias picassowifi-boot-odin='boot-odin picassowifi'
-alias release-picassowifi='release-cm picassowifi'
+alias release-picassowifi='release-lineage picassowifi'
 
-alias build-pme='build-cm pme'
-alias release-pme='release-cm pme'
+alias build-pme='build-lineage pme'
+alias release-pme='release-lineage pme'
 
-alias build-dlx='build-cm dlx'
-alias build-dlx-eng='build-cm dlx cm_dlx-eng'
-alias build-dlx-boot='build-cm-boot dlx'
-alias release-dlx='release-cm dlx'
+alias build-dlx='build-lineage dlx'
+alias build-dlx-eng='build-lineage dlx lineage-eng'
+alias build-dlx-boot='build-lineage-boot dlx'
+alias release-dlx='release-lineage dlx'
 
-alias build-Z008='build-cm Z008'
-alias build-Z008-eng='build-cm Z008 cm_Z008-eng'
-alias build-Z008-boot='build-cm-boot Z008'
-alias release-Z008='release-cm Z008'
+alias build-Z008='build-lineage Z008'
+alias build-Z008-eng='build-lineage Z008 lineage-eng'
+alias build-Z008-boot='build-lineage-boot Z008'
+alias release-Z008='release-lineage Z008'
 
-alias build-Z00A='build-cm Z00A'
-alias build-Z00A-eng='build-cm Z00A cm_Z00A-eng'
-alias build-Z00A-boot='build-cm-boot Z00A'
-alias release-Z00A='release-cm Z00A'
+alias build-Z00A='build-lineage Z00A'
+alias build-Z00A-eng='build-lineage Z00A lineage-eng'
+alias build-Z00A-boot='build-lineage-boot Z00A'
+alias release-Z00A='release-lineage Z00A'
 
-alias gdb-mondrianwifi="gdb-cm mondrianwifi"
+alias gdb-mondrianwifi="gdb-lineage mondrianwifi"
 
-alias mondrianwifi-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-mondrianwifi /out/mondrianwifi/*/target/product/mondrianwifi/recovery.img )'
+alias mondrianwifi-recovery-odin='( cd /mnt/roms/odin && create-odin lineage-recovery-mondrianwifi /out/mondrianwifi/*/target/product/mondrianwifi/recovery.img )'
 
-alias picassolte-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-picassolte /out/picassolte/*/target/product/picassolte/recovery.img )'
+alias picassolte-recovery-odin='( cd /mnt/roms/odin && create-odin lineage-recovery-picassolte /out/picassolte/*/target/product/picassolte/recovery.img )'
 
-alias picassowifi-recovery-odin='( cd /mnt/roms/odin && create-odin cm-recovery-picassowifi /out/picassowifi/*/target/product/picassowifi/recovery.img )'
+alias picassowifi-recovery-odin='( cd /mnt/roms/odin && create-odin lineage-recovery-picassowifi /out/picassowifi/*/target/product/picassowifi/recovery.img )'
 
 # -------------------------
 
-cm-status() {
+lineage-status() {
 (
-    cd $CM_SRC
+    cd $LINEAGE_SRC
     for f in `repo status | sed "s/^project //p;d" | sed "s/ .*//" | egrep -v '^prebuilts/' | sort`
     do
         (
@@ -407,7 +414,7 @@ cm-status() {
 # ------------------------
 
 flash-boot() {
-    boot=/out/$1/$CM_WHICH/target/product/$1/boot.img
+    boot=/out/$1/$LINEAGE_WHICH/target/product/$1/boot.img
     if [ ! -r "$boot" ]; then
 	echo >&2 "error: Must specify build target and build it.  Failed to access:\n\t$boot"
     else
@@ -433,7 +440,7 @@ flash-boot() {
 }
 
 flash-boot-fastboot() {
-    boot=/out/$1/$CM_WHICH/target/product/$1/boot.img
+    boot=/out/$1/$LINEAGE_WHICH/target/product/$1/boot.img
     fastboot flash boot $boot && fastboot reboot
 }
 
@@ -468,35 +475,35 @@ alias flash-recovery-picassowifi='flash-recovery picassowifi'
 
 # -----------------------------
 
-audit2allow-cm()
+audit2allow-lineage()
 {
  (
   export OUT_DIR_COMMON_BASE=/out/$1
-  export ANDROID_BUILD_TOP=$CM_SRC
-  $CM_SRC/external/selinux/prebuilts/bin/audit2allow -p $OUT_DIR_COMMON_BASE/$CM_WHICH/target/product/$1/root/sepolicy
+  export ANDROID_BUILD_TOP=$LINEAGE_SRC
+  $LINEAGE_SRC/external/selinux/prebuilts/bin/audit2allow -p $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/root/sepolicy
  )
 }
 
 alias cat-auditlogs="adb shell 'su -c \"cat /data/misc/audit/*\"'; adb shell dmesg; adb logcat -d"
-alias audit2allow-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm $CM_DEVICE'
-alias audit2allow-dlx='audit2allow-cm dlx'
-alias audit2allow-dlx-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm dlx'
-alias audit2allow-kiwi='audit2allow-cm kiwi'
-alias audit2allow-kiwi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm kiwi'
-alias audit2allow-mondrianwifi='audit2allow-cm mondrianwifi'
-alias audit2allow-mondrianwifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm mondrianwifi'
-alias audit2allow-picassolte='audit2allow-cm picassolte'
-alias audit2allow-picassolte-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassolte'
-alias audit2allow-picassowifi='audit2allow-cm picassowifi'
-alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm picassowifi'
-alias audit2allow-pme='audit2allow-cm pme'
-alias audit2allow-pme-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm pme'
-alias audit2allow-victara='audit2allow-cm victara'
-alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm victara'
-alias audit2allow-Z008='audit2allow-cm Z008'
-alias audit2allow-Z008-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm Z008'
-alias audit2allow-Z00A='audit2allow-cm Z00A'
-alias audit2allow-Z00A-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-cm Z00A'
+alias audit2allow-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage $LINEAGE_DEVICE'
+alias audit2allow-dlx='audit2allow-lineage dlx'
+alias audit2allow-dlx-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage dlx'
+alias audit2allow-kiwi='audit2allow-lineage kiwi'
+alias audit2allow-kiwi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage kiwi'
+alias audit2allow-mondrianwifi='audit2allow-lineage mondrianwifi'
+alias audit2allow-mondrianwifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage mondrianwifi'
+alias audit2allow-picassolte='audit2allow-lineage picassolte'
+alias audit2allow-picassolte-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage picassolte'
+alias audit2allow-picassowifi='audit2allow-lineage picassowifi'
+alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage picassowifi'
+alias audit2allow-pme='audit2allow-lineage pme'
+alias audit2allow-pme-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage pme'
+alias audit2allow-victara='audit2allow-lineage victara'
+alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage victara'
+alias audit2allow-Z008='audit2allow-lineage Z008'
+alias audit2allow-Z008-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage Z008'
+alias audit2allow-Z00A='audit2allow-lineage Z00A'
+alias audit2allow-Z00A-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage Z00A'
 
 # -----------------------------
 
@@ -530,7 +537,7 @@ adb-kill() {
 }
 
 generate-changelog() {
-  cd $CM_SRC/$1
+  cd $LINEAGE_SRC/$1
   TAG=nightly-`date +%Y%m%d`
   git tag -d $TAG 2>/dev/null
   git tag $TAG
