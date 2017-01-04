@@ -259,15 +259,37 @@ release-lineage() {
 
 release-nightly() {
   export OUT_DIR_COMMON_BASE=/out/$1/
+
+  F=`ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
   D=/nightlies/$1-$LINEAGE_WHICH
+  TMP=$D/.upload
+  FINAL=$D/`basename $F`
+
   if [ "`ssh download.crpalmer.org ls -d $D`" = "" ]; then
     D=/nightlies/$1
     ssh download.crpalmer.org mkdir -p $D
   fi
-  F=`ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
+
   echo "Releasing $F"
-  echo "To        $D"
-  scp $F download.crpalmer.org:$D/
+  echo "To        $FINAL"
+  echo "Via       $TMP"
+
+  for try in 1 2 3; do
+    scp $F download.crpalmer.org:$TMP
+
+    local_md5=`md5sum $F | cut -d ' ' -f 1`
+    remote_md5=`ssh download.crpalmer.org md5sum $TMP | cut -d ' ' -f 1`
+
+    if [ "$local_md5" = "$remote_md5" ]; then
+      echo "MD5s match, releasing it"
+      ssh download.crpalmer.org mv $TMP $FINAL
+      break
+    else
+      echo "MD5 mismatch, upload aborted on try $try / 3"
+      echo "Local MD5: $local_md5"
+      echo "Remote MD5: $remote_md5"
+    fi
+  done
 }
 
 build-lineage-boot() {
