@@ -1,6 +1,7 @@
 # Aliases / scripts for LineageOS work
 
 export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
+export WITH_SU=true
 
 alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
 alias start-lineage-14.1="export LINEAGE_WHICH=lineage-14.1 LINEAGE_SRC=~/lineage-14.1 && export C=~/lineage-14.1 && cd ~/lineage-14.1"
