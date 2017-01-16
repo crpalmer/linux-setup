@@ -1,17 +1,21 @@
 #!/bin/bash -i
 
 do_nightlies() {
-  sync-cm --force-sync
+  sync-lineage --force-sync
   if [ "$?" != 0 ]; then
     echo "Problems syncing"
     exit 1
   fi
 
+  if [ "$LINEAGE_WHICH" = lineage-14.1 ]; then
+    ( start-pme && repopick 154159) || exit 1
+  fi
+
   for nightly in $*
   do
     (
-      start-cm $nightly
-      build-cm $nightly
+      start-lineage $nightly
+      build-lineage $nightly
       release-nightly $nightly
 
       echo "Stopping jack"
@@ -32,13 +36,18 @@ do_nightlies() {
   # wtf jack server, do you really crash if I don't provide this??
   export USER=crpalmer
 
+  # need to be able to access repo to run repopick
+  export PATH=$PATH:/home/crpalmer/bin
+
   echo "Cleaning /out"
   rm -rf /out/*
 
-  start-cm-14.1
-  do_nightlies pme kiwi
+  start-lineage-14.1
+  do_nightlies kiwi pme
 
-  start-cm-13.0
+exit 1
+
+  start-lineage-13.0
   do_nightlies pme kiwi mondrianlte picassolte
 
 ) 2>&1 | tee /tmp/nightlies.txt
