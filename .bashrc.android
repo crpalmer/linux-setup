@@ -59,7 +59,7 @@ build-lineage() {
      target="$2"
   fi
 
-  export OUT_DIR_COMMON_BASE=/out/$1/ && \
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
   echo $OUT_DIR_COMMON_BASE && \
   cd $LINEAGE_SRC && \
   . ./build/envsetup.sh && \
@@ -86,7 +86,7 @@ start-lineage() {
   fi
   export PS1="[$1] $BASE_PS1"
 
-  export OUT_DIR_COMMON_BASE=/out/$1/
+  export OUT_DIR_COMMON_BASE=/out/$1
   cd $LINEAGE_SRC
   if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
      . ./build/envsetup.sh
@@ -254,12 +254,12 @@ lineage-dmesg() {
 }
 
 release-lineage() {
-  export OUT_DIR_COMMON_BASE=/out/$1/ && \
+  export OUT_DIR_COMMON_BASE=/out/$1 && \
   scp `ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1` download.crpalmer.org:/downloads/$1/
 }
 
 release-nightly() {
-  export OUT_DIR_COMMON_BASE=/out/$1/
+  export OUT_DIR_COMMON_BASE=/out/$1
 
   F=`ls -t $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL-$1.zip | head -1`
   D=/nightlies/$1-$LINEAGE_WHICH
