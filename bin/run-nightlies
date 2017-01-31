@@ -7,10 +7,6 @@ do_nightlies() {
     exit 1
   fi
 
-  if [ "$LINEAGE_WHICH" = lineage-14.1 ]; then
-    ( start-pme && repopick 154159) || exit 1
-  fi
-
   for nightly in $*
   do
     (
@@ -43,11 +39,9 @@ do_nightlies() {
   rm -rf /out/*
 
   start-lineage-14.1
-  do_nightlies kiwi pme
-
-exit 1
+  do_nightlies pme
 
   start-lineage-13.0
-  do_nightlies pme kiwi mondrianlte picassolte
+  do_nightlies pme kiwi mondrianwifi mondrianlte picassolte
 
 ) 2>&1 | tee /tmp/nightlies.txt
