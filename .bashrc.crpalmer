@@ -1,3 +1,8 @@
 . ~/.bashrc.misc
 . ~/.bashrc.android
 . ~/.bashrc.git
+
+if [ -d ~/.rvm ]
+then
+    . /home/crpalmer/.rvm/scripts/rvm
+fi
