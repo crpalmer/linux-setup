@@ -26,8 +26,7 @@ do_nightlies() {
 
 (
   # do not include su in these builds
-  # (temporarily keep it in though until the add-on package is available)
-  # export -n WITH_SU
+  export -n WITH_SU
 
   # wtf jack server, do you really crash if I don't provide this??
   export USER=crpalmer
