@@ -6,8 +6,6 @@ export WITH_SU=true
 alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
 alias start-lineage-14.1="export LINEAGE_WHICH=lineage-14.1 LINEAGE_SRC=~/lineage-14.1 && export C=~/lineage-14.1 && cd ~/lineage-14.1"
 
-start-lineage-14.1
-
 # Muscle memory requires these
 alias start-cm-13.0=start-lineage-13.0
 alias start-cm-14.1=start-lineage-14.1
