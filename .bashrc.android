@@ -123,6 +123,13 @@ start-lineage() {
     export K=$LINEAGE_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
+  ether)
+    export ANDROID_SERIAL=NBQGLMB651603894
+    export D=$LINEAGE_SRC/device/nextbit/$1
+    export V=$LINEAGE_SRC/vendor/nextbit/$1
+    export K=$LINEAGE_SRC/kernel/nextbit/msm8992
+    export STOCK=/data/$1/firmware/current/
+    ;;
   fugu)
     export ANDROID_SERIAL=FF18D69C
     export D=$LINEAGE_SRC/device/asus/$1
@@ -226,6 +233,7 @@ alias start-pme13='start-lineage-13.0 && start-lineage pme "$@"'
 alias start-pme='start-lineage-14.1 && start-lineage pme "$@"'
 alias start-victara13='start-lineage-13.0 && start-lineage victara "$@"'
 alias start-victara='start-lineage-14.1 && start-lineage victara "$@"'
+alias start-ether='start-lineage-14.1 && start-lineage ether "$@"'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
@@ -368,6 +376,9 @@ alias release-picassowifi='release-lineage picassowifi'
 
 alias build-pme='build-lineage pme'
 alias release-pme='release-lineage pme'
+
+alias build-ether='build-lineage ether'
+alias release-ether='release-lineage ether'
 
 alias build-dlx='build-lineage dlx'
 alias build-dlx-eng='build-lineage dlx lineage-eng'
@@ -519,6 +530,8 @@ alias audit2allow-picassowifi='audit2allow-lineage picassowifi'
 alias audit2allow-picassowifi-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage picassowifi'
 alias audit2allow-pme='audit2allow-lineage pme'
 alias audit2allow-pme-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage pme'
+alias audit2allow-ether='audit2allow-lineage ether'
+alias audit2allow-ether-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage ether'
 alias audit2allow-victara='audit2allow-lineage victara'
 alias audit2allow-victara-all='(adb shell dmesg ; cat-auditlogs ) | tee /tmp/audit2allow | audit2allow-lineage victara'
 alias audit2allow-Z008='audit2allow-lineage Z008'
