@@ -5,6 +5,7 @@ export WITH_SU=true
 
 alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
 alias start-lineage-14.1="export LINEAGE_WHICH=lineage-14.1 LINEAGE_SRC=~/lineage-14.1 && export C=~/lineage-14.1 && cd ~/lineage-14.1"
+alias start-omni-7.1='export LINEAGE_WHICH=omni-7.1 LINEAGE_SRC=/data/omni-7.1 && export C=$LINEAGE_SRC && cd $C'
 
 # Muscle memory requires these
 alias start-cm-13.0=start-lineage-13.0
@@ -12,6 +13,8 @@ alias start-cm-14.1=start-lineage-14.1
 alias build-cm=build-lineage
 alias cm-status=lineage-status
 alias sync-cm=sync-lineage
+
+alias build-recovery='(cd $C && mka recoveryimage)'
 
 if [ -x "/usr/bin/make-3.81" ]; then
    export LINEAGE_MAKE=/usr/bin/make-3.81
@@ -70,20 +73,7 @@ build-lineage() {
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
-start-lineage() {
-  if [ "$2" == "12.0" ]; then
-     start-lineage-12.0
-  elif [ "$2" = "12.1" ]; then
-     start-lineage-12.1
-  elif [ "$2" != "" ]; then
-     echo >&2 'Invalid argument [$2]'
-  fi
-
-  if [ "$BASE_PS1" = "" ]; then
-     export BASE_PS1="$PS1"
-  fi
-  export PS1="[$1] $BASE_PS1"
-
+start-common() {
   export OUT_DIR_COMMON_BASE=/out/$1
   cd $LINEAGE_SRC
   if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
@@ -219,6 +209,32 @@ start-lineage() {
   export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
 }
 
+start-omni() {
+  if [ "$BASE_PS1" = "" ]; then
+     export BASE_PS1="$PS1"
+  fi
+  export PS1="[OMNI $1] $BASE_PS1"
+
+  start-common $1
+}
+
+start-lineage() {
+  if [ "$2" == "12.0" ]; then
+     start-lineage-12.0
+  elif [ "$2" = "12.1" ]; then
+     start-lineage-12.1
+  elif [ "$2" != "" ]; then
+     echo >&2 'Invalid argument [$2]'
+  fi
+
+  if [ "$BASE_PS1" = "" ]; then
+     export BASE_PS1="$PS1"
+  fi
+  export PS1="[$1] $BASE_PS1"
+
+  start-common $1
+}
+
 alias start-dlx='start-lineage-13.0 && start-lineage dlx "$@"'
 alias start-Z008='start-lineage-13.0 && start-lineage Z008 "$@"'
 alias start-Z00A13='start-lineage-13.0 && start-lineage Z00A "$@"'
@@ -234,6 +250,11 @@ alias start-pme='start-lineage-14.1 && start-lineage pme "$@"'
 alias start-victara13='start-lineage-13.0 && start-lineage victara "$@"'
 alias start-victara='start-lineage-14.1 && start-lineage victara "$@"'
 alias start-ether='start-lineage-14.1 && start-lineage ether "$@"'
+
+alias start-twrp-ether='start-omni-7.1 && start-omni ether'
+alias start-twrp-kiwi='start-omni-7.1 && start-omni kiwi'
+alias start-twrp-pme='start-omni-7.1 && start-omni pme'
+alias start-twrp-victara='start-omni-7.1 && start-omni victara'
 
 adb-forward() {
   for i in 5039 5040 5041 5042 5043 5044 5045 5046 5047 5048
