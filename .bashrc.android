@@ -43,13 +43,15 @@ sync-lineage() {
 }
 
 run_make() {
+(
+  cd $C
   if [ -d /lineage-tmp/ ]; then
     export TMPDIR=/lineage-tmp
   fi
   export MAKE="$LINEAGE_MAKE"
   export CCACHE_BASEDIR="$OUT"
   time $LINEAGE_MAKE `make_j_arg` $*
-  ncores=`cat /proc/cpuinfo  | grep 'processor[[:space:]]*:' | wc -l`
+)
 }
 
 build-lineage() {
