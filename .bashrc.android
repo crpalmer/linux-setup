@@ -75,6 +75,25 @@ build-lineage() {
 ) 2>&1 | tee /tmp/build-$1.txt
 }
 
+start-cts() {
+  export -n ANDROID_BUILD_TOP
+}
+
+clean-cts() {
+  adb root
+  adb shell rm "/sdcard/cts*"
+  adb shell rm -rf \
+	"/sdcard/temp* /sdcard/tmp* /sdcard/*.dng /sdcard/*.ivf /sdcard/*.egp" \
+	"/sdcard/test?* /sdcard/record.out /sdcard/verifyJpegKeys.jpeg" \
+	"/sdcard/dynamic-config-files/ /sdcard/record.* /sdcard/football_out.yuv" \
+	"/sdcard/media* /sdcard/netsecpolicy.bin /sdcard/TestLog.qpa" \
+	"/sdcard/SurfaceViewSyncTests/ /sdcard/UiRenderingCaptures/ /sdcard/MUST_*" \
+	"/sdcard/sensorTests/ /sdcard/PlaybackTestResult.txt /sdcard/test" \
+	"/sdcard/OpenLabsLibrary/ /sdcard/dEQP-TestCaseList.txt" \
+	"/sdcard/device-info-files/ /sdcard/report-log-files/"
+
+}
+
 start-common() {
   export OUT_DIR_COMMON_BASE=/out/$1
   cd $LINEAGE_SRC
