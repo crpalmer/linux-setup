@@ -88,7 +88,7 @@ clean-cts() {
 	"/sdcard/dynamic-config-files/ /sdcard/record.* /sdcard/football_out.yuv" \
 	"/sdcard/media* /sdcard/netsecpolicy.bin /sdcard/TestLog.qpa" \
 	"/sdcard/SurfaceViewSyncTests/ /sdcard/UiRenderingCaptures/ /sdcard/MUST_*" \
-	"/sdcard/sensorTests/ /sdcard/PlaybackTestResult.txt /sdcard/test" \
+	"/sdcard/sensorTests/ /sdcard/PlaybackTestResult.txt" \
 	"/sdcard/OpenLabsLibrary/ /sdcard/dEQP-TestCaseList.txt" \
 	"/sdcard/device-info-files/ /sdcard/report-log-files/"
 
