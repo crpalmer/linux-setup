@@ -1,6 +1,6 @@
 # Aliases / scripts for LineageOS work
 
-export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$PATH:/opt/toolchains/linaro-4.8/bin/"
+export PATH="~/android-sdk-linux/build-tools/23.0.2:~/android-sdk-linux/platform-tools:$PATH"
 export WITH_SU=true
 
 alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
@@ -13,6 +13,8 @@ alias start-cm-14.1=start-lineage-14.1
 alias build-cm=build-lineage
 alias cm-status=lineage-status
 alias sync-cm=sync-lineage
+
+alias build-lineage-all='build-lineage-unsigned ether ; build-lineage-unsigned pme ; build-lineage-unsigned kiwi; build-lineage-unsigned victara ; build-lineage-unsigned mondrianwifi'
 
 alias build-recovery='(cd $C && mka recoveryimage)'
 
@@ -54,26 +56,54 @@ run_make() {
 )
 }
 
-build-lineage() {
+run-build() {
 (
-  if [ "$2" = "" ]; then
-     target="$1"
-  else
-     target="$2"
-  fi
+  set -e
+  S=$OUT/signing
+  CERTS=~/.android-certs
+  ZIP=$OUT/$LINEAGE_WHICH-`date +%Y%m%d`-crpalmer-$LINEAGE_DEVICE.zip
+  run_make target-files-package dist
+  mkdir -p $OUT/signing
+  cd $S
+  ( ln -s $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH out ; ln -s $C/vendor ; true)
+  $C/build/tools/releasetools/sign_target_files_apks \
+    -o \
+    -d $CERTS \
+    $DIST/*-target_files-*.zip \
+    $S/signed-target_files.zip
+  $C/build/tools/releasetools/ota_from_target_files \
+    -k $CERTS/releasekey \
+    --block --backup=true \
+    $S/signed-target_files.zip \
+    unsigned.zip
+  sign_zip.py -k $CERTS/platform unsigned.zip $ZIP
+  cp $ZIP /mnt/roms/$LINEAGE_DEVICE
+)
+}
 
-  export OUT_DIR_COMMON_BASE=/out/$1 && \
-  echo $OUT_DIR_COMMON_BASE && \
+build-lineage-signed() {
+(
+  start-lineage $1 && \
   cd $LINEAGE_SRC && \
-  . ./build/envsetup.sh && \
-  breakfast $target && \
-  run_make bacon && \
+  rm -rf $DIST/*-target_files-*.zip || true && \
+  time run-build 2>&1 | tee /tmp/build-$1.txt
+)
+}
+
+build-lineage-unsigned() {
+(
+  set -e
+
+  start-lineage $1
+  run_make bacon
   if [ -e /mnt/roms ]; then
-    mkdir -p /mnt/roms/$1 && \
+    mkdir -p /mnt/roms/$1
     cp $OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1/*-UNOFFICIAL*-$1.zip /mnt/roms/$1
   fi
 ) 2>&1 | tee /tmp/build-$1.txt
 }
+
+alias build-lineage=build-lineage-unsigned
 
 start-cts() {
   export -n ANDROID_BUILD_TOP
@@ -99,11 +129,13 @@ start-common() {
   cd $LINEAGE_SRC
   if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
      . ./build/envsetup.sh
-     breakfast $1
+     breakfast $1 || true
   fi
 
   export OUT="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1"
   export CTS="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/host/linux-x86/cts"
+  export DIST="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/dist"
+  export LINEAGE_DEVICE="$1"
   export STOCK=""
 
   export DD=""
@@ -228,6 +260,10 @@ start-common() {
 
   tmp=`echo $PATH | tr ':' '\n' | egrep -v /home/crpalmer/android-sdk-linux | tr '\n' ':'`
   export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
+
+  echo "Environment configured for $LINEAGE_WHICH $LINEAGE_DEVICE"
+
+  return 0
 }
 
 start-omni() {
@@ -244,8 +280,12 @@ start-lineage() {
      start-lineage-12.0
   elif [ "$2" = "12.1" ]; then
      start-lineage-12.1
+  elif [ "$2" = "13.0" ]; then
+     start-lineage-13.0
   elif [ "$2" != "" ]; then
      echo >&2 'Invalid argument [$2]'
+  elif [ "$LINEAGE_SRC" = "" ]; then
+     start-lineage-14.1
   fi
 
   if [ "$BASE_PS1" = "" ]; then
