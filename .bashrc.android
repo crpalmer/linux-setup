@@ -107,6 +107,8 @@ alias build-lineage=build-lineage-unsigned
 
 start-cts() {
   export -n ANDROID_BUILD_TOP
+  cd ~/android-cts
+  ./tools/cts-tradefed
 }
 
 clean-cts() {
