@@ -1,7 +1,6 @@
 # Aliases / scripts for LineageOS work
 
 export PATH="~/android-sdk-linux/build-tools/23.0.2:~/android-sdk-linux/platform-tools:$PATH"
-export WITH_SU=true
 
 alias start-lineage-13.0="export LINEAGE_WHICH=lineage-13.0 LINEAGE_SRC=~/lineage-13.0 && export C=~/lineage-13.0 && cd ~/lineage-13.0"
 alias start-lineage-14.1="export LINEAGE_WHICH=lineage-14.1 LINEAGE_SRC=~/lineage-14.1 && export C=~/lineage-14.1 && cd ~/lineage-14.1"
@@ -127,121 +126,127 @@ clean-cts() {
 }
 
 start-common() {
-  export OUT_DIR_COMMON_BASE=/out/$1
+  if [ "$1" = "picassowifi" ]; then
+    device="n2awifi"
+  else
+    device="$1"
+  fi
+
+  export OUT_DIR_COMMON_BASE=/out/$device
   cd $LINEAGE_SRC
   if [ `hostname` = compile -o `hostname` = ab1  -o `hostname` = ab ]; then
      . ./build/envsetup.sh
-     breakfast $1 || true
+     breakfast $device || true
   fi
 
-  export OUT="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$1"
+  export OUT="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/target/product/$device"
   export CTS="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/host/linux-x86/cts"
   export DIST="$OUT_DIR_COMMON_BASE/$LINEAGE_WHICH/dist"
-  export LINEAGE_DEVICE="$1"
+  export LINEAGE_DEVICE="$device"
   export STOCK=""
 
   export DD=""
   export VV=""
 
-  case "$1" in
+  case "$device" in
   dlx)
     export ANDROID_SERIAL=FA2BLS506023
-    export D=$LINEAGE_SRC/device/htc/$1
-    export V=$LINEAGE_SRC/vendor/htc/$1
+    export D=$LINEAGE_SRC/device/htc/$device
+    export V=$LINEAGE_SRC/vendor/htc/$device
     export K=$LINEAGE_SRC/kernel/htc/m7
     ;;
   Z008)
     export ANDROID_SERIAL=F9AZFGTW0010
-    export D=$LINEAGE_SRC/device/asus/$1
+    export D=$LINEAGE_SRC/device/asus/$device
     export DD=$LINEAGE_SRC/device/asus/mofd-common
-    export V=$LINEAGE_SRC/vendor/asus/$1
+    export V=$LINEAGE_SRC/vendor/asus/$device
     export VV=$LINEAGE_SRC/vendor/asus/mofd-common
     export K=$LINEAGE_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current-z008
     ;;
   Z00A)
     export ANDROID_SERIAL=F5AZFG10C192
-    export D=$LINEAGE_SRC/device/asus/$1
+    export D=$LINEAGE_SRC/device/asus/$device
     export DD=$LINEAGE_SRC/device/asus/mofd-common
-    export V=$LINEAGE_SRC/vendor/asus/$1
+    export V=$LINEAGE_SRC/vendor/asus/$device
     export VV=$LINEAGE_SRC/vendor/asus/mofd-common
     export K=$LINEAGE_SRC/kernel/asus/moorefield
     export STOCK=/data/zenfone2/firmware/current
     ;;
   ether)
     export ANDROID_SERIAL=NBQGLMB651603894
-    export D=$LINEAGE_SRC/device/nextbit/$1
-    export V=$LINEAGE_SRC/vendor/nextbit/$1
+    export D=$LINEAGE_SRC/device/nextbit/$device
+    export V=$LINEAGE_SRC/vendor/nextbit/$device
     export K=$LINEAGE_SRC/kernel/nextbit/msm8992
-    export STOCK=/data/$1/firmware/current/
+    export STOCK=/data/$device/firmware/current/
     ;;
   fugu)
     export ANDROID_SERIAL=FF18D69C
-    export D=$LINEAGE_SRC/device/asus/$1
-    export V=$LINEAGE_SRC/vendor/asus/$1
+    export D=$LINEAGE_SRC/device/asus/$device
+    export V=$LINEAGE_SRC/vendor/asus/$device
     export K=$LINEAGE_SRC/kernel/asus/fugu
     ;;
   kiwi)
     export ANDROID_SERIAL=GFMDU16109001917
-    export D=$LINEAGE_SRC/device/huawei/$1
-    export V=$LINEAGE_SRC/vendor/huawei/$1
-    export K=$LINEAGE_SRC/kernel/huawei/$1
+    export D=$LINEAGE_SRC/device/huawei/$device
+    export V=$LINEAGE_SRC/vendor/huawei/$device
+    export K=$LINEAGE_SRC/kernel/huawei/$device
     export STOCK=/data/kiwi/firmware/current
     ;;
   hammerhead|hammerheadcaf)
     export ANDROID_SERIAL=03a3e4ad437cbd9b
-    export D=$LINEAGE_SRC/device/lge/$1
-    export V=$LINEAGE_SRC/vendor/lge/$1
+    export D=$LINEAGE_SRC/device/lge/$device
+    export V=$LINEAGE_SRC/vendor/lge/$device
     export K=$LINEAGE_SRC/kernel/lge/hammerhead
     ;;
   mondrianwifi)
     export ANDROID_SERIAL=1019440c06792b29
-    export D=$LINEAGE_SRC/device/samsung/$1
-    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export D=$LINEAGE_SRC/device/samsung/$device
+    export V=$LINEAGE_SRC/vendor/samsung/$device
     export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     export STOCK=/data/mondrianwifi/t320ueu1anai/
     ;;
   mondrianlte)
     export ANDROID_SERIAL=1019440c06792b29
-    export D=$LINEAGE_SRC/device/samsung/$1
+    export D=$LINEAGE_SRC/device/samsung/$device
     export DD=$LINEAGE_SRC/device/samsung/tabpro-common
-    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export V=$LINEAGE_SRC/vendor/samsung/$device
     export VV=$LINEAGE_SRC/vendor/samsung/tabpro-common
     export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     ;;
   picassolte)
     export ANDROID_SERIAL=1ed18fed
-    export D=$LINEAGE_SRC/device/samsung/$1
+    export D=$LINEAGE_SRC/device/samsung/$device
     export DD=$LINEAGE_SRC/device/samsung/tabpro-common
-    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export V=$LINEAGE_SRC/vendor/samsung/$device
     export VV=$LINEAGE_SRC/vendor/samsung/tabpro-common
     export K=$LINEAGE_SRC/kernel/samsung/mondrianwifi
     ;;
-  picassowifi)
+  n2awifi)
     export ANDROID_SERIAL=32044d1a104eb0db
-    export D=$LINEAGE_SRC/device/samsung/$1
-    export V=$LINEAGE_SRC/vendor/samsung/$1
+    export D=$LINEAGE_SRC/device/samsung/$device
+    export V=$LINEAGE_SRC/vendor/samsung/$device
     export K=$LINEAGE_SRC/kernel/samsung/exynos5420
     export STOCK=/data/exynos/T520UANF4/
     ;;
   pme)
     export ANDROID_SERIAL=HT66RBN00029
-    export D=$LINEAGE_SRC/device/htc/$1
-    export V=$LINEAGE_SRC/vendor/htc/$1
+    export D=$LINEAGE_SRC/device/htc/$device
+    export V=$LINEAGE_SRC/vendor/htc/$device
     export K=$LINEAGE_SRC/kernel/htc/msm8996
-    export STOCK=/data/$1/firmware/current/
+    export STOCK=/data/$device/firmware/current/
     ;;
   tetra|tetratwrp)
     export ANDROID_SERIAL=14442D48F8902AE
-    export D=$LINEAGE_SRC/device/sony/$1
-    export V=$LINEAGE_SRC/vendor/sony/$1
+    export D=$LINEAGE_SRC/device/sony/$device
+    export V=$LINEAGE_SRC/vendor/sony/$device
     export K=$LINEAGE_SRC/kernel/sony/tetra
     ;;
   victara)
     #export ANDROID_SERIAL=TA98903O0Y
     export ANDROID_SERIAL=TA9890CWCF
-    export D=$LINEAGE_SRC/device/motorola/$1
-    export V=$LINEAGE_SRC/vendor/motorola/$1
+    export D=$LINEAGE_SRC/device/motorola/$device
+    export V=$LINEAGE_SRC/vendor/motorola/$device
     export K=$LINEAGE_SRC/kernel/motorola/msm8974
     export STOCK=/data/victara/firmware/6.0
     ;;
@@ -258,7 +263,7 @@ start-common() {
     export VV="$V"
   fi
 
-  LINEAGE_DEVICE=$1
+  LINEAGE_DEVICE=$device
 
   tmp=`echo $PATH | tr ':' '\n' | egrep -v /home/crpalmer/android-sdk-linux | tr '\n' ':'`
   export PATH="/home/crpalmer/android-sdk-linux/platform-tools:$tmp"
@@ -307,7 +312,7 @@ alias start-kiwi='start-lineage-14.1 && start-lineage kiwi "$@"'
 alias start-mondrianwifi13='start-lineage-13.0 && start-lineage mondrianwifi "$@"'
 alias start-mondrianwifi='start-lineage-14.1 && start-lineage mondrianwifi "$@"'
 alias start-picassolte='start-lineage-13.0 && start-lineage picassolte "$@"'
-alias start-picassowifi='start-lineage-13.0 && start-lineage picassowifi "$@"'
+alias start-picassowifi='start-lineage-14.1 && start-lineage picassowifi "$@"'
 alias start-pme13='start-lineage-13.0 && start-lineage pme "$@"'
 alias start-pme='start-lineage-14.1 && start-lineage pme "$@"'
 alias start-victara13='start-lineage-13.0 && start-lineage victara "$@"'
