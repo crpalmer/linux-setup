@@ -1,0 +1,4 @@
+alias build-taz6="./build-lulzbot-firmware.sh Oliveoil_TAZ6 Tilapia_SingleExtruder && ./build-lulzbot-firmware.sh Oliveoil_TAZ6 Angelfish_Aerostruder"
+alias start-smoothie='cd /src/smoothieware && . BuildShell'
+alias openscad=openscad-nightly
+export OPENSCADPATH=~/scad/lib:.

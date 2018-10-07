@@ -1,6 +1,8 @@
 . ~/.bashrc.misc
 . ~/.bashrc.android
 . ~/.bashrc.git
+. ~/.bashrc.3d
+. ~/.bashrc.ruby
 
 if [ -d ~/.rvm ]
 then
